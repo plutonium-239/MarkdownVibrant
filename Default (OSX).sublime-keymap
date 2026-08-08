@@ -1,0 +1,27 @@
+[
+    {
+        "keys": ["super+alt+m"],
+        "command": "markdown_live_preview",
+        "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
+    },
+    {
+        "keys": ["super+shift+t"],
+        "command": "format_markdown_table",
+        "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
+    },
+    {
+        "keys": ["super+alt+c"],
+        "command": "toggle_markdown_task",
+        "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
+    },
+    {
+        "keys": ["super+alt+g"],
+        "command": "generate_markdown_toc",
+        "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
+    },
+    {
+        "keys": ["super+alt+v"],
+        "command": "apply_markdown_vibrant_theme",
+        "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
+    }
+]

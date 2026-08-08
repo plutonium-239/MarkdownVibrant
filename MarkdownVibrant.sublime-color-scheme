@@ -1,0 +1,159 @@
+{
+  "name": "Markdown Vibrant Neon",
+  "author": "Sublime Markdown Vibrant",
+  "variables": {
+    "bg": "#0f111a",
+    "fg": "#f0f4fc",
+    "caret": "#00f5d4",
+    "line_highlight": "#1a1d2e",
+    "selection": "#323859",
+    "comment": "#6b7280",
+
+    "h1": "#ff007f",
+    "h2": "#bd93f9",
+    "h3": "#00f5d4",
+    "h4": "#50fa7b",
+    "h5": "#ffb86c",
+    "h6": "#ff5555",
+
+    "bold": "#ff79c6",
+    "italic": "#8be9fd",
+    "code": "#f1fa8c",
+    "code_bg": "#1e2238",
+    "quote": "#00e5ff",
+    "link": "#bd93f9",
+    "url": "#38ef7d",
+    "list_bullet": "#ff922b",
+    "table": "#00f5d4",
+    "checkbox_done": "#50fa7b",
+    "checkbox_todo": "#ff5555"
+  },
+  "globals": {
+    "background": "var(bg)",
+    "foreground": "var(fg)",
+    "caret": "var(caret)",
+    "line_highlight": "var(line_highlight)",
+    "selection": "var(selection)",
+    "active_guide": "#00f5d4",
+    "find_highlight": "#ff007f",
+    "find_highlight_foreground": "#ffffff"
+  },
+  "rules": [
+    {
+      "name": "Markdown Heading 1",
+      "scope": "entity.name.section.markdown markup.heading.1.markdown, markup.heading.1.markdown punctuation.definition.heading.markdown",
+      "foreground": "var(h1)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Heading 2",
+      "scope": "entity.name.section.markdown markup.heading.2.markdown, markup.heading.2.markdown punctuation.definition.heading.markdown",
+      "foreground": "var(h2)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Heading 3",
+      "scope": "entity.name.section.markdown markup.heading.3.markdown, markup.heading.3.markdown punctuation.definition.heading.markdown",
+      "foreground": "var(h3)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Heading 4",
+      "scope": "entity.name.section.markdown markup.heading.4.markdown, markup.heading.4.markdown punctuation.definition.heading.markdown",
+      "foreground": "var(h4)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Heading 5",
+      "scope": "entity.name.section.markdown markup.heading.5.markdown, markup.heading.5.markdown punctuation.definition.heading.markdown",
+      "foreground": "var(h5)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Heading 6",
+      "scope": "entity.name.section.markdown markup.heading.6.markdown, markup.heading.6.markdown punctuation.definition.heading.markdown",
+      "foreground": "var(h6)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Bold",
+      "scope": "markup.bold.markdown",
+      "foreground": "var(bold)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Italic",
+      "scope": "markup.italic.markdown",
+      "foreground": "var(italic)",
+      "font_style": "italic"
+    },
+    {
+      "name": "Markdown Strikethrough",
+      "scope": "markup.strikethrough.markdown",
+      "foreground": "var(comment)"
+    },
+    {
+      "name": "Markdown Inline Code",
+      "scope": "markup.inline.raw.string.markdown, markup.raw.inline.markdown",
+      "foreground": "var(code)",
+      "background": "var(code_bg)"
+    },
+    {
+      "name": "Markdown Fenced Code Block",
+      "scope": "markup.raw.block.markdown, markup.raw.code-fence.markdown",
+      "foreground": "#f8f8f2",
+      "background": "#161824"
+    },
+    {
+      "name": "Markdown Code Fence Punctuation",
+      "scope": "punctuation.definition.raw.code-fence.markdown",
+      "foreground": "#6272a4"
+    },
+    {
+      "name": "Markdown Blockquote",
+      "scope": "markup.quote.markdown",
+      "foreground": "var(quote)",
+      "font_style": "italic"
+    },
+    {
+      "name": "Markdown List Bullet / Number",
+      "scope": "punctuation.definition.list_item.markdown, markup.list.numbered.bullet.markdown",
+      "foreground": "var(list_bullet)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Link Text",
+      "scope": "string.other.link.title.markdown, string.other.link.description.markdown",
+      "foreground": "var(link)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Link URL",
+      "scope": "markup.underline.link.markdown, meta.link.inline.markdown punctuation.definition.metadata.markdown",
+      "foreground": "var(url)"
+    },
+    {
+      "name": "Markdown Table",
+      "scope": "markup.other.table.markdown, punctuation.definition.table.markdown",
+      "foreground": "var(table)"
+    },
+    {
+      "name": "Markdown Checkbox Done",
+      "scope": "punctuation.definition.checkbox.checked.markdown, meta.checkbox.checked.markdown",
+      "foreground": "var(checkbox_done)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Checkbox Todo",
+      "scope": "punctuation.definition.checkbox.unchecked.markdown, meta.checkbox.unchecked.markdown",
+      "foreground": "var(checkbox_todo)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Markdown Horizontal Rule",
+      "scope": "meta.separator.markdown, punctuation.definition.metadata.markdown",
+      "foreground": "#bd93f9",
+      "font_style": "bold"
+    }
+  ]
+}

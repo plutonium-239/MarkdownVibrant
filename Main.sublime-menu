@@ -1,0 +1,35 @@
+[
+    {
+        "id": "tools",
+        "children": [
+            {
+                "caption": "Markdown Vibrant",
+                "id": "markdown_vibrant",
+                "children": [
+                    {
+                        "caption": "Toggle Side-by-Side Live Preview",
+                        "command": "markdown_live_preview"
+                    },
+                    { "caption": "-" },
+                    {
+                        "caption": "Auto-Format Table",
+                        "command": "format_markdown_table"
+                    },
+                    {
+                        "caption": "Generate Table of Contents (TOC)",
+                        "command": "generate_markdown_toc"
+                    },
+                    {
+                        "caption": "Toggle Task Checkbox ([ ] / [x])",
+                        "command": "toggle_markdown_task"
+                    },
+                    { "caption": "-" },
+                    {
+                        "caption": "Apply Vibrant Color Scheme",
+                        "command": "apply_markdown_vibrant_theme"
+                    }
+                ]
+            }
+        ]
+    }
+]

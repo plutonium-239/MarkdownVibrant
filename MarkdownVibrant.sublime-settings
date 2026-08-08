@@ -1,0 +1,8 @@
+{
+    "auto_apply_vibrant_theme": true,
+    "preview_update_delay_ms": 150,
+    "preview_background": "#0f111a",
+    "preview_font_size_px": 14,
+    "enable_callouts": true,
+    "table_auto_format_on_save": false
+}

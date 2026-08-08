@@ -1,0 +1,16 @@
+[
+    { "caption": "-" },
+    {
+        "caption": "Markdown: Toggle Live Split Preview",
+        "command": "markdown_live_preview"
+    },
+    {
+        "caption": "Markdown: Format Pipe Table",
+        "command": "format_markdown_table"
+    },
+    {
+        "caption": "Markdown: Toggle Checkbox",
+        "command": "toggle_markdown_task"
+    },
+    { "caption": "-" }
+]
