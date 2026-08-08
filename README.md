@@ -28,11 +28,11 @@ An all-encompassing, high-contrast, feature-packed Markdown plugin for Sublime T
 
 ## Keybindings
 
-| Command | Windows / Linux | macOS |
-|---|---|---|
-| Toggle Split Live Preview | `Ctrl+Alt+M` | `Cmd+Option+M` |
-| Format Pipe Table | `Ctrl+Shift+T` | `Cmd+Shift+T` |
-| Toggle Task Checkbox | `Ctrl+Alt+C` | `Cmd+Option+C` |
-| Generate Table of Contents | `Ctrl+Alt+G` | `Cmd+Option+G` |
-| Apply Vibrant Theme | `Ctrl+Alt+V` | `Cmd+Option+V` |
+| Command                    | Windows / Linux | macOS          |
+|:---------------------------|:----------------|:---------------|
+| Toggle Split Live Preview  | `Ctrl+Alt+M`    | `Cmd+Option+M` |
+| Format Pipe Table          | `Ctrl+Shift+T`  | `Cmd+Shift+T`  |
+| Toggle Task Checkbox       | `Ctrl+Alt+C`    | `Cmd+Option+C` |
+| Generate Table of Contents | `Ctrl+Alt+G`    | `Cmd+Option+G` |
+| Apply Vibrant Theme        | `Ctrl+Alt+V`    | `Cmd+Option+V` |
 
