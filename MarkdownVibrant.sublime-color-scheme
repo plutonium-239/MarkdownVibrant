@@ -40,67 +40,77 @@
   },
   "rules": [
     {
+      "name": "Markdown Heading General",
+      "scope": "markup.heading, entity.name.section.markdown",
+      "font_style": "bold"
+    },
+    {
       "name": "Markdown Heading 1",
-      "scope": "entity.name.section.markdown markup.heading.1.markdown, markup.heading.1.markdown punctuation.definition.heading.markdown",
+      "scope": "markup.heading.1, markup.heading.1.markdown, markup.heading.1 entity.name.section.markdown",
       "foreground": "var(h1)",
       "font_style": "bold"
     },
     {
       "name": "Markdown Heading 2",
-      "scope": "entity.name.section.markdown markup.heading.2.markdown, markup.heading.2.markdown punctuation.definition.heading.markdown",
+      "scope": "markup.heading.2, markup.heading.2.markdown, markup.heading.2 entity.name.section.markdown",
       "foreground": "var(h2)",
       "font_style": "bold"
     },
     {
       "name": "Markdown Heading 3",
-      "scope": "entity.name.section.markdown markup.heading.3.markdown, markup.heading.3.markdown punctuation.definition.heading.markdown",
+      "scope": "markup.heading.3, markup.heading.3.markdown, markup.heading.3 entity.name.section.markdown",
       "foreground": "var(h3)",
       "font_style": "bold"
     },
     {
       "name": "Markdown Heading 4",
-      "scope": "entity.name.section.markdown markup.heading.4.markdown, markup.heading.4.markdown punctuation.definition.heading.markdown",
+      "scope": "markup.heading.4, markup.heading.4.markdown, markup.heading.4 entity.name.section.markdown",
       "foreground": "var(h4)",
       "font_style": "bold"
     },
     {
       "name": "Markdown Heading 5",
-      "scope": "entity.name.section.markdown markup.heading.5.markdown, markup.heading.5.markdown punctuation.definition.heading.markdown",
+      "scope": "markup.heading.5, markup.heading.5.markdown, markup.heading.5 entity.name.section.markdown",
       "foreground": "var(h5)",
       "font_style": "bold"
     },
     {
       "name": "Markdown Heading 6",
-      "scope": "entity.name.section.markdown markup.heading.6.markdown, markup.heading.6.markdown punctuation.definition.heading.markdown",
+      "scope": "markup.heading.6, markup.heading.6.markdown, markup.heading.6 entity.name.section.markdown",
       "foreground": "var(h6)",
       "font_style": "bold"
     },
     {
+      "name": "Markdown Heading Punctuation",
+      "scope": "punctuation.definition.heading, punctuation.definition.heading.markdown",
+      "font_style": "bold"
+    },
+    {
       "name": "Markdown Bold",
-      "scope": "markup.bold.markdown",
+      "scope": "markup.bold, markup.bold.markdown",
       "foreground": "var(bold)",
       "font_style": "bold"
     },
     {
       "name": "Markdown Italic",
-      "scope": "markup.italic.markdown",
+      "scope": "markup.italic, markup.italic.markdown",
       "foreground": "var(italic)",
       "font_style": "italic"
     },
     {
       "name": "Markdown Strikethrough",
-      "scope": "markup.strikethrough.markdown",
+      "scope": "markup.strikethrough, markup.strikethrough.markdown",
       "foreground": "var(comment)"
     },
     {
       "name": "Markdown Inline Code",
-      "scope": "markup.inline.raw.string.markdown, markup.raw.inline.markdown",
+      "scope": "markup.inline.raw, markup.inline.raw.string.markdown, markup.raw.inline.markdown",
       "foreground": "var(code)",
       "background": "var(code_bg)"
     },
     {
       "name": "Markdown Fenced Code Block",
-      "scope": "markup.raw.block.markdown, markup.raw.code-fence.markdown",
+      "scope": "markup.raw.block, markup.raw.block.markdown, markup.raw.code-fence.markdown",
       "foreground": "#f8f8f2",
       "background": "#161824"
     },
@@ -111,30 +121,30 @@
     },
     {
       "name": "Markdown Blockquote",
-      "scope": "markup.quote.markdown",
+      "scope": "markup.quote, markup.quote.markdown",
       "foreground": "var(quote)",
       "font_style": "italic"
     },
     {
       "name": "Markdown List Bullet / Number",
-      "scope": "punctuation.definition.list_item.markdown, markup.list.numbered.bullet.markdown",
+      "scope": "punctuation.definition.list_item, punctuation.definition.list_item.markdown, markup.list.numbered.bullet.markdown",
       "foreground": "var(list_bullet)",
       "font_style": "bold"
     },
     {
       "name": "Markdown Link Text",
-      "scope": "string.other.link.title.markdown, string.other.link.description.markdown",
+      "scope": "string.other.link.title, string.other.link.title.markdown, string.other.link.description.markdown",
       "foreground": "var(link)",
       "font_style": "bold"
     },
     {
       "name": "Markdown Link URL",
-      "scope": "markup.underline.link.markdown, meta.link.inline.markdown punctuation.definition.metadata.markdown",
+      "scope": "markup.underline.link, markup.underline.link.markdown, meta.link.inline.markdown punctuation.definition.metadata.markdown",
       "foreground": "var(url)"
     },
     {
       "name": "Markdown Table",
-      "scope": "markup.other.table.markdown, punctuation.definition.table.markdown",
+      "scope": "markup.other.table, markup.other.table.markdown, punctuation.definition.table.markdown",
       "foreground": "var(table)"
     },
     {
@@ -151,7 +161,7 @@
     },
     {
       "name": "Markdown Horizontal Rule",
-      "scope": "meta.separator.markdown, punctuation.definition.metadata.markdown",
+      "scope": "meta.separator, meta.separator.markdown, punctuation.definition.metadata.markdown",
       "foreground": "#bd93f9",
       "font_style": "bold"
     }

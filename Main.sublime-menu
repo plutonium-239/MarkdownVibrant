@@ -12,10 +12,6 @@
                     },
                     { "caption": "-" },
                     {
-                        "caption": "Auto-Format Table",
-                        "command": "format_markdown_table"
-                    },
-                    {
                         "caption": "Generate Table of Contents (TOC)",
                         "command": "generate_markdown_toc"
                     },
