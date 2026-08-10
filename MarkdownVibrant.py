@@ -1,13 +1,14 @@
+import sys
+
+from renderer import CustomRenderer, raw_table_plugin
 import sublime
 import sublime_plugin
 import re
 import html
+import os
 
-# Try importing mistune (system or bundled)
-try:
-    import mistune
-except ImportError:
-    from . import mistune
+sys.path.append(os.path.dirname(__file__))
+from vendor import mistune
 
 PREVIEW_SHEETS = {}
 PREVIEW_VIEWS = {}
@@ -71,15 +72,13 @@ class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
     def render_html(self):
         full_text = self.view.substr(sublime.Region(0, self.view.size()))
         
-        # Parse using mistune
-        if hasattr(mistune, 'html'):
-            body_html = mistune.html(full_text)
-        elif hasattr(mistune, 'markdown'):
-            body_html = mistune.markdown(full_text)
-        elif callable(mistune):
-            body_html = mistune(full_text)
-        else:
-            body_html = html.escape(full_text)
+        # markdown = mistune.create_markdown(escape=False, plugins=["strikethrough", "footnotes"])
+        markdown = mistune.create_markdown(
+            renderer=CustomRenderer(),
+            escape=False,
+            plugins=["strikethrough", "footnotes", raw_table_plugin],
+        )
+        body_html = markdown(full_text)
 
         full_html = f"""
         <html>
@@ -112,8 +111,15 @@ class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
                     overflow-x: auto;
                     margin: 12px 0;
                 }}
+                .custom-table {{
+                    font-family: monospace;
+                    background-color: #161824;
+                    border-radius: 6px;
+                    padding: 12px;
+                    white-space: pre-wrap;
+                }}
                 code {{
-                    font-family: Consolas, "Courier New", monospace;
+                    font-family: monospace;
                     color: #f1fa8c;
                     font-size: 13px;
                 }}
@@ -124,6 +130,9 @@ class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
         </body>
         </html>
         """
+        with open('/Users/pu239/MarkdownVibrant/last_output.html', 'w') as f:
+            print(f.name)
+            f.write(full_html)
         return full_html
 
 
