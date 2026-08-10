@@ -1,22 +1,106 @@
 import sys
+import os
 
-from renderer import CustomRenderer, raw_table_plugin
+_vendor = os.path.join(os.path.dirname(__file__), 'vendor')
+if _vendor not in sys.path:
+    sys.path.insert(0, _vendor)
+
+from .renderer import CustomRenderer, raw_table_plugin
+import mistune
 import sublime
 import sublime_plugin
 import re
 import html
-import os
 
-sys.path.append(os.path.dirname(__file__))
-from vendor import mistune
-
+# view_id -> (preview_sheet_id, source_view)
 PREVIEW_SHEETS = {}
-PREVIEW_VIEWS = {}
+PREVIEW_VIEWS = {}  # sheet_id -> view_id (reverse lookup)
+
+def _close_preview_sheet(view_id, sheet_id):
+    """Close a preview HTML sheet and clean up tracking dicts."""
+    for w in sublime.windows():
+        for sheet in w.sheets():
+            if sheet.id() == sheet_id:
+                sheet.close()
+                break
+    PREVIEW_SHEETS.pop(view_id, None)
+    PREVIEW_VIEWS.pop(sheet_id, None)
+
+PREVIEW_CSS = """
+body {
+    background-color: #0f111a;
+    color: #f0f4fc;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 16px 20px;
+    line-height: 1.6;
+    font-size: 14px;
+}
+h1 { color: #ff007f; border-bottom: 2px solid #ff007f; padding-bottom: 6px; margin-top: 20px; font-size: 22px; }
+h2 { color: #bd93f9; border-bottom: 1px solid #323859; padding-bottom: 4px; margin-top: 18px; font-size: 18px; }
+h3 { color: #00f5d4; margin-top: 16px; font-size: 16px; }
+h4 { color: #50fa7b; margin-top: 14px; font-size: 14px; }
+h5 { color: #ffb86c; margin-top: 12px; font-size: 13px; }
+h6 { color: #ff5555; margin-top: 10px; font-size: 12px; }
+a { color: #38ef7d; text-decoration: none; font-weight: bold; }
+p { margin: 8px 0; }
+ul, ol { padding-left: 20px; margin: 8px 0; }
+li { margin: 4px 0; color: #f0f4fc; }
+.ol { padding-left: 20px; margin: 8px 0; }
+.ol-item { margin: 4px 0; color: #f0f4fc; }
+.ol-item p { display: inline; }
+hr { border: none; height: 1px; background: linear-gradient(90deg, #ff007f, #00f5d4); margin: 20px 0; }
+pre {
+    background-color: #161824;
+    border: 1px solid #323859;
+    border-radius: 6px;
+    padding: 12px;
+    overflow-x: auto;
+    margin: 12px 0;
+}
+.custom-table {
+    font-family: monospace;
+    background-color: #161824;
+    border-radius: 6px;
+    padding: 12px;
+    white-space: pre-wrap;
+}
+code {
+    font-family: Consolas, "Courier New", monospace;
+    color: #f1fa8c;
+    font-size: 13px;
+}
+"""
+
+
+def _render_preview_html(text):
+    renderer = CustomRenderer()
+    import renderer as renderer_mod
+    markdown = mistune.create_markdown(
+        renderer=renderer,
+        escape=False,
+        plugins=["strikethrough", "footnotes", raw_table_plugin],
+    )
+    body_html = markdown(text)
+    assert isinstance(body_html, str)
+    full_html = (
+        "<html>\n<head>\n<style>\n"
+        + PREVIEW_CSS
+        + "\n</style>\n</head>\n<body>\n"
+        + body_html
+        + "\n</body>\n</html>"
+    )
+    with open('/Users/pu239/MarkdownVibrant/last_output.html', 'w') as f:
+        f.write(full_html)
+    return full_html
 
 
 class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
     """
-    Toggles side-by-side live HTML Markdown preview in Sublime Text 4 using window.new_html_sheet.
+    Toggles a live HTML Markdown preview in Sublime Text 4 using window.new_html_sheet.
+
+    Uses the "split view" mechanism (a temporary pane within the same group)
+    instead of creating a new column group, so the existing window layout is preserved.
+
     Uses Mistune parser for rendering.
     """
     def run(self, edit):
@@ -28,112 +112,32 @@ class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
 
         # Check if preview already open for this view
         if view_id in PREVIEW_SHEETS:
-            sheet_id = PREVIEW_SHEETS[view_id]
-            for sheet in window.sheets():
-                if sheet.id() == sheet_id:
-                    sheet.close()
-                    break
-            del PREVIEW_SHEETS[view_id]
-            if sheet_id in PREVIEW_VIEWS:
-                del PREVIEW_VIEWS[sheet_id]
-            
-            # Reset layout if 2 groups and group 1 empty
-            if len(window.sheets_in_group(1)) == 0:
-                window.set_layout({
-                    "cols": [0.0, 1.0],
-                    "rows": [0.0, 1.0],
-                    "cells": [[0, 0, 1, 1]]
-                })
+            _close_preview_sheet(view_id, PREVIEW_SHEETS[view_id][0])
             sublime.status_message("Markdown Preview Closed")
             return
 
-        # Ensure split 2-column layout
-        if window.num_groups() < 2:
-            window.set_layout({
-                "cols": [0.0, 0.5, 1.0],
-                "rows": [0.0, 1.0],
-                "cells": [[0, 0, 1, 1], [1, 0, 2, 1]]
-            })
-
         # Render initial HTML via Mistune
-        html_content = self.render_html()
+        full_text = self.view.substr(sublime.Region(0, self.view.size()))
+        html_content = _render_preview_html(full_text)
         doc_title = self.view.file_name() or "Markdown Preview"
         if doc_title and "/" in doc_title:
             doc_title = doc_title.split("/")[-1]
         sheet_title = f"Preview: {doc_title}"
 
-        html_sheet = window.new_html_sheet(sheet_title, html_content, group=1)
-        PREVIEW_SHEETS[view_id] = html_sheet.id()
+        # Use ADD_TO_SELECTION so the HTML sheet opens as a temporary split pane
+        # within the current group, mirroring the built-in "Split View" behavior
+        # without altering the window's column/row layout.
+        html_sheet = window.new_html_sheet(
+            sheet_title,
+            html_content,
+            flags=sublime.NewFileFlags.ADD_TO_SELECTION,
+            group=-1,
+        )
+        PREVIEW_SHEETS[view_id] = (html_sheet.id(), self.view)
         PREVIEW_VIEWS[html_sheet.id()] = view_id
 
         window.focus_view(self.view)
         sublime.status_message("Markdown Split Live Preview Opened")
-
-    def render_html(self):
-        full_text = self.view.substr(sublime.Region(0, self.view.size()))
-        
-        # markdown = mistune.create_markdown(escape=False, plugins=["strikethrough", "footnotes"])
-        markdown = mistune.create_markdown(
-            renderer=CustomRenderer(),
-            escape=False,
-            plugins=["strikethrough", "footnotes", raw_table_plugin],
-        )
-        body_html = markdown(full_text)
-
-        full_html = f"""
-        <html>
-        <head>
-            <style>
-                body {{
-                    background-color: #0f111a;
-                    color: #f0f4fc;
-                    font-family: system-ui, -apple-system, sans-serif;
-                    padding: 16px 20px;
-                    line-height: 1.6;
-                    font-size: 14px;
-                }}
-                h1 {{ color: #ff007f; border-bottom: 2px solid #ff007f; padding-bottom: 6px; margin-top: 20px; font-size: 22px; }}
-                h2 {{ color: #bd93f9; border-bottom: 1px solid #323859; padding-bottom: 4px; margin-top: 18px; font-size: 18px; }}
-                h3 {{ color: #00f5d4; margin-top: 16px; font-size: 16px; }}
-                h4 {{ color: #50fa7b; margin-top: 14px; font-size: 14px; }}
-                h5 {{ color: #ffb86c; margin-top: 12px; font-size: 13px; }}
-                h6 {{ color: #ff5555; margin-top: 10px; font-size: 12px; }}
-                a {{ color: #38ef7d; text-decoration: none; font-weight: bold; }}
-                p {{ margin: 8px 0; }}
-                ul, ol {{ padding-left: 20px; margin: 8px 0; }}
-                li {{ margin: 4px 0; color: #f0f4fc; }}
-                hr {{ border: none; height: 1px; background: linear-gradient(90deg, #ff007f, #00f5d4); margin: 20px 0; }}
-                pre {{
-                    background-color: #161824;
-                    border: 1px solid #323859;
-                    border-radius: 6px;
-                    padding: 12px;
-                    overflow-x: auto;
-                    margin: 12px 0;
-                }}
-                .custom-table {{
-                    font-family: monospace;
-                    background-color: #161824;
-                    border-radius: 6px;
-                    padding: 12px;
-                    white-space: pre-wrap;
-                }}
-                code {{
-                    font-family: monospace;
-                    color: #f1fa8c;
-                    font-size: 13px;
-                }}
-            </style>
-        </head>
-        <body>
-            {body_html}
-        </body>
-        </html>
-        """
-        with open('/Users/pu239/MarkdownVibrant/last_output.html', 'w') as f:
-            print(f.name)
-            f.write(full_html)
-        return full_html
 
 
 class MarkdownVibrantEventListener(sublime_plugin.EventListener):
@@ -146,6 +150,28 @@ class MarkdownVibrantEventListener(sublime_plugin.EventListener):
 
     def on_activated_async(self, view):
         self._auto_apply_vibrant_theme(view)
+        settings = sublime.load_settings("MarkdownVibrant.sublime-settings")
+        if settings.get("auto_close_singled_out_preview", True):
+            sublime.set_timeout(self._close_singled_out_previews, 50)
+
+    def _close_singled_out_previews(self):
+        if not PREVIEW_SHEETS:
+            return
+        for view_id, (sheet_id, source_view) in list(PREVIEW_SHEETS.items()):
+            if not source_view.is_valid():
+                _close_preview_sheet(view_id, sheet_id)
+                continue
+            window = source_view.window()
+            if window is None:
+                _close_preview_sheet(view_id, sheet_id)
+                continue
+            source_sheet = source_view.sheet()
+            if source_sheet is None:
+                _close_preview_sheet(view_id, sheet_id)
+                continue
+            selected_ids = {s.id() for s in window.selected_sheets()}
+            if source_sheet.id() not in selected_ids:
+                _close_preview_sheet(view_id, sheet_id)
 
     def _auto_apply_vibrant_theme(self, view):
         if not view or not view.is_valid():
@@ -158,50 +184,24 @@ class MarkdownVibrantEventListener(sublime_plugin.EventListener):
 
     def on_modified_async(self, view):
         view_id = view.id()
-        if view_id in PREVIEW_SHEETS:
-            sheet_id = PREVIEW_SHEETS[view_id]
-            window = view.window()
-            if not window:
-                return
-            
-            for sheet in window.sheets():
-                if sheet.id() == sheet_id:
-                    full_text = view.substr(sublime.Region(0, view.size()))
-                    if hasattr(mistune, 'html'):
-                        body_html = mistune.html(full_text)
-                    elif hasattr(mistune, 'markdown'):
-                        body_html = mistune.markdown(full_text)
-                    else:
-                        body_html = html.escape(full_text)
-                    
-                    full_html = f"""
-                    <html>
-                    <head>
-                        <style>
-                            body {{ background-color: #0f111a; color: #f0f4fc; font-family: sans-serif; padding: 16px; line-height: 1.6; }}
-                            h1 {{ color: #ff007f; border-bottom: 2px solid #ff007f; font-size: 22px; }}
-                            h2 {{ color: #bd93f9; border-bottom: 1px solid #323859; font-size: 18px; }}
-                            h3 {{ color: #00f5d4; font-size: 16px; }}
-                            h4 {{ color: #50fa7b; font-size: 14px; }}
-                            a {{ color: #38ef7d; font-weight: bold; }}
-                            hr {{ border: none; height: 1px; background: linear-gradient(90deg, #ff007f, #00f5d4); margin: 16px 0; }}
-                            pre {{ background-color: #161824; border: 1px solid #323859; border-radius: 6px; padding: 10px; }}
-                            code {{ font-family: monospace; color: #f1fa8c; }}
-                        </style>
-                    </head>
-                    <body>{body_html}</body>
-                    </html>
-                    """
-                    sheet.set_contents(full_html)
-                    break
+        if view_id not in PREVIEW_SHEETS:
+            return
+        sheet_id = PREVIEW_SHEETS[view_id][0]
+        window = view.window()
+        if not window:
+            return
+
+        for sheet in window.sheets():
+            if sheet.id() == sheet_id:
+                full_text = view.substr(sublime.Region(0, view.size()))
+                full_html = _render_preview_html(full_text)
+                sheet.set_contents(full_html)
+                break
 
     def on_close(self, view):
         view_id = view.id()
         if view_id in PREVIEW_SHEETS:
-            sheet_id = PREVIEW_SHEETS[view_id]
-            del PREVIEW_SHEETS[view_id]
-            if sheet_id in PREVIEW_VIEWS:
-                del PREVIEW_VIEWS[sheet_id]
+            _close_preview_sheet(view_id, PREVIEW_SHEETS[view_id][0])
 
 
 class GenerateMarkdownTocCommand(sublime_plugin.TextCommand):
@@ -253,13 +253,3 @@ class ToggleMarkdownTaskCommand(sublime_plugin.TextCommand):
                     new_text = "- [ ] " + line_text
 
             self.view.replace(edit, line_region, new_text)
-
-
-class ApplyMarkdownVibrantThemeCommand(sublime_plugin.TextCommand):
-    """
-    Applies the vibrant custom color scheme to the current view or settings.
-    """
-    def run(self, edit):
-        scheme = "Packages/MarkdownVibrant/MarkdownVibrant.sublime-color-scheme"
-        self.view.settings().set("color_scheme", scheme)
-        sublime.status_message("Applied Markdown Vibrant Color Scheme")

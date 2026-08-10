@@ -1,10 +1,15 @@
 import html
+import os
+import re
 import sys
-from typing import Match, Optional
+from typing import Any, Match, Optional
 
-sys.path.append('./vendor')
-from vendor import mistune
-from vendor.mistune.plugins.table import (
+_vendor = os.path.join(os.path.dirname(__file__), 'vendor')
+if _vendor not in sys.path:
+    sys.path.insert(0, _vendor)
+
+import mistune
+from mistune.plugins.table import (
     TABLE_PATTERN,
     NP_TABLE_PATTERN,
     _strip_pipe_table_row,
@@ -14,12 +19,48 @@ from vendor.mistune.plugins.table import (
     _parse_invalid_pipe_table,
 )
 
-
 class CustomRenderer(mistune.HTMLRenderer):
 	def custom_table(self, text: str) -> str:
 		if self._escape:
 			text = html.escape(text.strip())
 		return f'<div class="custom-table">\n{text}\n</div>\n'
+
+	def list(self, text: str, ordered: bool, **attrs: Any) -> str:
+		if not ordered:
+			return "<ul>\n" + text + "</ul>\n"
+		start = attrs.get("start")
+		idx = int(start) if start is not None else 1
+		items = _split_top_level_items(text)
+		out = [f'<div class="ol-item">{idx + i}. {item}</div>' for i, item in enumerate(items)]
+		return '<div class="ol">\n' + "\n".join(out) + '\n</div>\n'
+
+
+def _split_top_level_items(text: str) -> list:
+	"""Split rendered list HTML into top-level <li> items, preserving nested sub-lists."""
+	items = []
+	depth = 0
+	current = []
+	i = 0
+	while i < len(text):
+		if text[i:].startswith("<li>"):
+			if depth == 0:
+				current = []
+			else:
+				current.append(text[i:i+4])
+			depth += 1
+			i += 4
+		elif text[i:].startswith("</li>"):
+			depth -= 1
+			if depth == 0:
+				items.append("".join(current))
+			else:
+				current.append(text[i:i+5])
+			i += 5
+		else:
+			if depth > 0:
+				current.append(text[i])
+			i += 1
+	return items
 
 
 def _parse_raw_table(block: mistune.BlockParser, m: Match[str], state: mistune.BlockState) -> Optional[int]:
