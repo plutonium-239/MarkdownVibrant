@@ -5,7 +5,7 @@ _vendor = os.path.join(os.path.dirname(__file__), 'vendor')
 if _vendor not in sys.path:
     sys.path.insert(0, _vendor)
 
-from .renderer import CustomRenderer, raw_table_plugin
+from .renderer import CustomRenderer
 import mistune
 import sublime
 import sublime_plugin
@@ -26,65 +26,21 @@ def _close_preview_sheet(view_id, sheet_id):
     PREVIEW_SHEETS.pop(view_id, None)
     PREVIEW_VIEWS.pop(sheet_id, None)
 
-PREVIEW_CSS = """
-body {
-    background-color: #0f111a;
-    color: #f0f4fc;
-    font-family: system-ui, -apple-system, sans-serif;
-    padding: 16px 20px;
-    line-height: 1.6;
-    font-size: 14px;
-}
-h1 { color: #ff007f; border-bottom: 2px solid #ff007f; padding-bottom: 6px; margin-top: 20px; font-size: 22px; }
-h2 { color: #bd93f9; border-bottom: 1px solid #323859; padding-bottom: 4px; margin-top: 18px; font-size: 18px; }
-h3 { color: #00f5d4; margin-top: 16px; font-size: 16px; }
-h4 { color: #50fa7b; margin-top: 14px; font-size: 14px; }
-h5 { color: #ffb86c; margin-top: 12px; font-size: 13px; }
-h6 { color: #ff5555; margin-top: 10px; font-size: 12px; }
-a { color: #38ef7d; text-decoration: none; font-weight: bold; }
-p { margin: 8px 0; }
-ul, ol { padding-left: 20px; margin: 8px 0; }
-li { margin: 4px 0; color: #f0f4fc; }
-.ol { padding-left: 20px; margin: 8px 0; }
-.ol-item { margin: 4px 0; color: #f0f4fc; }
-.ol-item p { display: inline; }
-hr { border: none; height: 1px; background: linear-gradient(90deg, #ff007f, #00f5d4); margin: 20px 0; }
-pre {
-    background-color: #161824;
-    border: 1px solid #323859;
-    border-radius: 6px;
-    padding: 12px;
-    overflow-x: auto;
-    margin: 12px 0;
-}
-.custom-table {
-    font-family: monospace;
-    background-color: #161824;
-    border-radius: 6px;
-    padding: 12px;
-    white-space: pre-wrap;
-}
-code {
-    font-family: Consolas, "Courier New", monospace;
-    color: #f1fa8c;
-    font-size: 13px;
-}
-"""
 
 
 def _render_preview_html(text):
     renderer = CustomRenderer()
-    import renderer as renderer_mod
     markdown = mistune.create_markdown(
         renderer=renderer,
         escape=False,
-        plugins=["strikethrough", "footnotes", raw_table_plugin],
+        plugins=["strikethrough", "footnotes", "table"],
     )
     body_html = markdown(text)
     assert isinstance(body_html, str)
+    preview_css = sublime.load_resource("Packages/MarkdownVibrant/preview.css")
     full_html = (
         "<html>\n<head>\n<style>\n"
-        + PREVIEW_CSS
+        + preview_css
         + "\n</style>\n</head>\n<body>\n"
         + body_html
         + "\n</body>\n</html>"
@@ -143,13 +99,8 @@ class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
 class MarkdownVibrantEventListener(sublime_plugin.EventListener):
     """
     Listens for markdown text edits and automatically refreshes the HTML live preview.
-    Automatically applies the MarkdownVibrant color scheme whenever a Markdown file is opened or activated.
     """
-    def on_load_async(self, view):
-        self._auto_apply_vibrant_theme(view)
-
     def on_activated_async(self, view):
-        self._auto_apply_vibrant_theme(view)
         settings = sublime.load_settings("MarkdownVibrant.sublime-settings")
         if settings.get("auto_close_singled_out_preview", True):
             sublime.set_timeout(self._close_singled_out_previews, 50)
@@ -172,15 +123,6 @@ class MarkdownVibrantEventListener(sublime_plugin.EventListener):
             selected_ids = {s.id() for s in window.selected_sheets()}
             if source_sheet.id() not in selected_ids:
                 _close_preview_sheet(view_id, sheet_id)
-
-    def _auto_apply_vibrant_theme(self, view):
-        if not view or not view.is_valid():
-            return
-        syntax = view.settings().get("syntax", "")
-        if "markdown" in syntax.lower() or view.match_selector(0, "text.html.markdown"):
-            vibrant_scheme = "Packages/MarkdownVibrant/MarkdownVibrant.sublime-color-scheme"
-            if view.settings().get("color_scheme") != vibrant_scheme:
-                view.settings().set("color_scheme", vibrant_scheme)
 
     def on_modified_async(self, view):
         view_id = view.id()

@@ -110,14 +110,20 @@
     },
     {
       "name": "Markdown Fenced Code Block",
-      "scope": "markup.raw.block, markup.raw.block.markdown, markup.raw.code-fence.markdown",
+      "scope": "markup.raw.block, markup.raw.code-fence",
       "foreground": "#f8f8f2",
-      "background": "#161824"
+      "background": "var(code_bg)"
     },
     {
       "name": "Markdown Code Fence Punctuation",
       "scope": "punctuation.definition.raw.code-fence.markdown",
       "foreground": "#6272a4"
+    },
+    {
+      "name": "Markdown Code Fence Language Identifier",
+      "scope": "constant.other.language-name.markdown",
+      "foreground": "var(italic)",
+      "font_style": "bold"
     },
     {
       "name": "Markdown Blockquote",
@@ -164,6 +170,63 @@
       "scope": "meta.separator, meta.separator.markdown, punctuation.definition.metadata.markdown",
       "foreground": "#bd93f9",
       "font_style": "bold"
+    },
+    {
+      "name": "Comment",
+      "scope": "comment",
+      "foreground": "#6272a4",
+      "font_style": "italic"
+    },
+    {
+      "name": "String",
+      "scope": "string",
+      "foreground": "var(code)"
+    },
+    {
+      "name": "Escape Sequence / Symbol",
+      "scope": "constant.character.escape, constant.other.symbol",
+      "foreground": "var(code)"
+    },
+    {
+      "name": "Constant",
+      "scope": "constant.numeric, constant.language, constant.character",
+      "foreground": "var(h2)"
+    },
+    {
+      "name": "Keyword / Storage",
+      "scope": "keyword, storage",
+      "foreground": "var(bold)"
+    },
+    {
+      "name": "Operator",
+      "scope": "keyword.operator",
+      "foreground": "var(italic)"
+    },
+    {
+      "name": "Function Name",
+      "scope": "entity.name.function, support.function, meta.function-call",
+      "foreground": "var(h4)"
+    },
+    {
+      "name": "Type / Class / Tag",
+      "scope": "entity.name.type, entity.name.class, support.class, support.type, entity.name.tag",
+      "foreground": "var(italic)"
+    },
+    {
+      "name": "Attribute Name",
+      "scope": "entity.other.attribute-name",
+      "foreground": "var(h5)"
+    },
+    {
+      "name": "Variable (Parameter / Language)",
+      "scope": "variable.parameter, variable.language",
+      "foreground": "var(h5)",
+      "font_style": "italic"
+    },
+    {
+      "name": "Punctuation (Definition / Separator)",
+      "scope": "punctuation.definition, punctuation.separator",
+      "foreground": "#f8f8f2"
     }
   ]
 }

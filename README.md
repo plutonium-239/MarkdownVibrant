@@ -5,7 +5,8 @@ An all-encompassing, high-contrast, feature-packed Markdown plugin for Sublime T
 ## Features
 
 1. **Automatic Theme Activation**:
-   - Automatically detects and applies `MarkdownVibrant.sublime-color-scheme` whenever you open or switch to a Markdown file in Sublime Text.
+   - Applies `MarkdownVibrant.sublime-color-scheme` the moment a Markdown file opens, via syntax-specific settings files shipped for the `Markdown`, `MultiMarkdown`, and `Markdown Extended` syntaxes.
+   - Applied before the view is first rendered, so there is no flash of your default theme and no delay.
 
 2. **Native Side-by-Side HTML Live Preview (Powered by Mistune)**:
    - Uses Sublime Text 4's native `window.new_html_sheet` API and the fast `mistune` Python Markdown parser.
@@ -25,12 +26,23 @@ An all-encompassing, high-contrast, feature-packed Markdown plugin for Sublime T
 
 - **[Markdown Table Formatter](https://packagecontrol.io/packages/Markdown%20Table%20Formatter)**: We recommend installing this package via Package Control for fast, automatic table formatting and pipe alignment in Sublime Text.
 
+## Other Markdown Flavors
+
+The theme ships settings files for the `Markdown`, `MultiMarkdown`, and `Markdown Extended` syntaxes. If you use another markdown-family syntax, create a file `Packages/User/<Syntax Name>.sublime-settings` containing:
+
+```json
+{
+    "color_scheme": "Packages/MarkdownVibrant/MarkdownVibrant.sublime-color-scheme"
+}
+```
+
+Settings in `Packages/User/` always take precedence over the ones this package ships, so you can also use the same file to opt out for a specific syntax by setting your own `color_scheme`.
+
 ## Keybindings
 
-| Command | Windows / Linux | macOS |
-|---|---|---|
-| Toggle Split Live Preview | `Ctrl+Alt+M` | `Cmd+Option+M` |
-| Toggle Task Checkbox | `Ctrl+Alt+C` | `Cmd+Option+C` |
-| Generate Table of Contents | `Ctrl+Alt+G` | `Cmd+Option+G` |
-| Apply Vibrant Theme | `Ctrl+Alt+V` | `Cmd+Option+V` |
+| Command                    | Windows / Linux | macOS          |
+|:---------------------------|:----------------|:---------------|
+| Toggle Split Live Preview  | `Ctrl+Alt+M`    | `Cmd+Option+M` |
+| Toggle Task Checkbox       | `Ctrl+Alt+C`    | `Cmd+Option+C` |
+| Generate Table of Contents | `Ctrl+Alt+G`    | `Cmd+Option+G` |
 
