@@ -105,6 +105,14 @@ class MarkdownVibrantEventListener(sublime_plugin.EventListener):
         if settings.get("auto_close_singled_out_preview", True):
             sublime.set_timeout(self._close_singled_out_previews, 50)
 
+    def on_pre_save(self, view):
+        settings = sublime.load_settings("MarkdownVibrant.sublime-settings")
+        if not settings.get("table_autoformat_on_save", True):
+            return
+        if not view.match_selector(0, "text.html.markdown"):
+            return
+        view.run_command("markdown_vibrant_format_table", {"format_all": True})
+
     def _close_singled_out_previews(self):
         if not PREVIEW_SHEETS:
             return

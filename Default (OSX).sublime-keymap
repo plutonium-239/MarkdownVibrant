@@ -13,5 +13,10 @@
         "keys": ["super+alt+g"],
         "command": "generate_markdown_toc",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
+    },
+    {
+        "keys": ["super+alt+shift+t"],
+        "command": "markdown_vibrant_format_table",
+        "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
     }
 ]
