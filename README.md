@@ -1,5 +1,7 @@
 # MarkdownVibrant for Sublime Text 4
 
+![img](./logo.svg)
+
 An all-encompassing, high-contrast, feature-packed Markdown plugin for Sublime Text 4.
 
 ## Features
