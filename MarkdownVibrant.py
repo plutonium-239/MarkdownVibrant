@@ -10,11 +10,12 @@ import mistune
 import sublime
 import sublime_plugin
 import re
-import html
 
 # view_id -> (preview_sheet_id, source_view)
 PREVIEW_SHEETS = {}
 PREVIEW_VIEWS = {}  # sheet_id -> view_id (reverse lookup)
+
+_SETTINGS = sublime.load_settings("MarkdownVibrant.sublime-settings")
 
 def _close_preview_sheet(view_id, sheet_id):
     """Close a preview HTML sheet and clean up tracking dicts."""
@@ -45,8 +46,10 @@ def _render_preview_html(text):
         + body_html
         + "\n</body>\n</html>"
     )
-    with open('/Users/pu239/MarkdownVibrant/last_output.html', 'w') as f:
-        f.write(full_html)
+    if _SETTINGS.get("preview_debug_write_html", False):
+        debug_path = os.path.join(os.path.dirname(__file__), "last_output.html")
+        with open(debug_path, "w") as f:
+            f.write(full_html)
     return full_html
 
 
@@ -101,13 +104,11 @@ class MarkdownVibrantEventListener(sublime_plugin.EventListener):
     Listens for markdown text edits and automatically refreshes the HTML live preview.
     """
     def on_activated_async(self, view):
-        settings = sublime.load_settings("MarkdownVibrant.sublime-settings")
-        if settings.get("auto_close_singled_out_preview", True):
+        if _SETTINGS.get("auto_close_singled_out_preview", True):
             sublime.set_timeout(self._close_singled_out_previews, 50)
 
     def on_pre_save(self, view):
-        settings = sublime.load_settings("MarkdownVibrant.sublime-settings")
-        if not settings.get("table_autoformat_on_save", True):
+        if not _SETTINGS.get("table_autoformat_on_save", True):
             return
         if not view.match_selector(0, "text.html.markdown"):
             return
