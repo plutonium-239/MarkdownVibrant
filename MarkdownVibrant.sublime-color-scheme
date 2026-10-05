@@ -5,9 +5,8 @@
     "bg": "#0f111a",
     "fg": "#f0f4fc",
     "caret": "#00f5d4",
-    "line_highlight": "#1a1d2e",
+    "line_highlight": "#3c2436",
     "selection": "#323859",
-    "comment": "#6b7280",
 
     "h1": "#ff007f",
     "h2": "#bd93f9",
@@ -20,13 +19,27 @@
     "italic": "#8be9fd",
     "code": "#f1fa8c",
     "code_bg": "#1e2238",
+    "code_fg": "#f8f8f2",
+    "white": "#ffffff",
     "quote": "#00e5ff",
-    "link": "#bd93f9",
     "url": "#38ef7d",
     "list_bullet": "#ff922b",
     "table": "#00f5d4",
     "checkbox_done": "#50fa7b",
-    "checkbox_todo": "#ff5555"
+    "checkbox_todo": "#ff5555",
+
+    "strike": "#ff5555",
+    "quote_bg": "#8b949e2e",
+    "hr_bg": "#58a6ff33",
+    "link_text": "#58a6ff",
+    "link_punct": "#6272a4",
+
+    // These should not change.
+    "alert_note": "#58a6ff",
+    "alert_tip": "#3fb950",
+    "alert_warning": "#d29922",
+    "alert_important": "#bc8cff",
+    "alert_caution": "#f85149"
   },
   "globals": {
     "background": "var(bg)",
@@ -34,9 +47,9 @@
     "caret": "var(caret)",
     "line_highlight": "var(line_highlight)",
     "selection": "var(selection)",
-    "active_guide": "#00f5d4",
-    "find_highlight": "#ff007f",
-    "find_highlight_foreground": "#ffffff"
+    "active_guide": "var(caret)",
+    "find_highlight": "var(h1)",
+    "find_highlight_foreground": "var(white)"
   },
   "rules": [
     {
@@ -86,6 +99,21 @@
       "font_style": "bold"
     },
     {
+      "name": "Markdown Heading 1 Background",
+      "scope": "markup.heading.1 - meta.whitespace",
+      "background": "color(var(h1) alpha(0.18))"
+    },
+    {
+      "name": "Markdown Heading 2 Background",
+      "scope": "markup.heading.2 - meta.whitespace",
+      "background": "color(var(h2) alpha(0.18))"
+    },
+    {
+      "name": "Markdown Heading 3 Background",
+      "scope": "markup.heading.3 - meta.whitespace",
+      "background": "color(var(h3) alpha(0.18))"
+    },
+    {
       "name": "Markdown Bold",
       "scope": "markup.bold, markup.bold.markdown",
       "foreground": "var(bold)",
@@ -100,7 +128,7 @@
     {
       "name": "Markdown Strikethrough",
       "scope": "markup.strikethrough, markup.strikethrough.markdown",
-      "foreground": "var(comment)"
+      "foreground": "var(strike)"
     },
     {
       "name": "Markdown Inline Code",
@@ -111,13 +139,13 @@
     {
       "name": "Markdown Fenced Code Block",
       "scope": "markup.raw.block, markup.raw.code-fence",
-      "foreground": "#f8f8f2",
+      "foreground": "var(code_fg)",
       "background": "var(code_bg)"
     },
     {
       "name": "Markdown Code Fence Punctuation",
       "scope": "punctuation.definition.raw.code-fence.markdown",
-      "foreground": "#6272a4"
+      "foreground": "var(link_punct)"
     },
     {
       "name": "Markdown Code Fence Language Identifier",
@@ -129,7 +157,73 @@
       "name": "Markdown Blockquote",
       "scope": "markup.quote, markup.quote.markdown",
       "foreground": "var(quote)",
-      "font_style": "italic"
+      "font_style": "italic",
+      "background": "var(quote_bg)"
+    },
+    {
+      "name": "Admonition Note",
+      "scope": "markup.quote.alert.note.markdown",
+      "foreground": "var(fg)",
+      "font_style": "",
+      "background": "color(var(alert_note) alpha(0.18))"
+    },
+    {
+      "name": "Admonition Note Tag",
+      "scope": "markup.heading.alert.note.markdown",
+      "foreground": "var(alert_note)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Admonition Tip",
+      "scope": "markup.quote.alert.tip.markdown",
+      "foreground": "var(fg)",
+      "font_style": "",
+      "background": "color(var(alert_tip) alpha(0.18))"
+    },
+    {
+      "name": "Admonition Tip Tag",
+      "scope": "markup.heading.alert.tip.markdown",
+      "foreground": "var(alert_tip)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Admonition Important",
+      "scope": "markup.quote.alert.important.markdown",
+      "foreground": "var(fg)",
+      "font_style": "",
+      "background": "color(var(alert_important) alpha(0.18))"
+    },
+    {
+      "name": "Admonition Important Tag",
+      "scope": "markup.heading.alert.important.markdown",
+      "foreground": "var(alert_important)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Admonition Warning",
+      "scope": "markup.quote.alert.warning.markdown",
+      "foreground": "var(fg)",
+      "font_style": "",
+      "background": "color(var(alert_warning) alpha(0.18))"
+    },
+    {
+      "name": "Admonition Warning Tag",
+      "scope": "markup.heading.alert.warning.markdown",
+      "foreground": "var(alert_warning)",
+      "font_style": "bold"
+    },
+    {
+      "name": "Admonition Caution",
+      "scope": "markup.quote.alert.caution.markdown",
+      "foreground": "var(fg)",
+      "font_style": "",
+      "background": "color(var(alert_caution) alpha(0.18))"
+    },
+    {
+      "name": "Admonition Caution Tag",
+      "scope": "markup.heading.alert.caution.markdown",
+      "foreground": "var(alert_caution)",
+      "font_style": "bold"
     },
     {
       "name": "Markdown List Bullet / Number",
@@ -139,14 +233,50 @@
     },
     {
       "name": "Markdown Link Text",
-      "scope": "string.other.link.title, string.other.link.title.markdown, string.other.link.description.markdown",
-      "foreground": "var(link)",
-      "font_style": "bold"
+      "scope": "meta.link.inline.description.markdown, meta.link.reference.description.markdown, meta.image.inline.description.markdown, string.other.link.title, string.other.link.title.markdown",
+      "foreground": "var(link_text)",
+      "font_style": "underline"
+    },
+    {
+      "name": "Markdown Link Label (Reference)",
+      "scope": "string.other.link.description, string.other.link.description.markdown, constant.other.link.reference, constant.other.link.reference.markdown, meta.link.reference.label.markdown",
+      "foreground": "var(h5)"
     },
     {
       "name": "Markdown Link URL",
-      "scope": "markup.underline.link, markup.underline.link.markdown, meta.link.inline.markdown punctuation.definition.metadata.markdown",
+      "scope": "markup.underline.link, markup.underline.link.markdown",
       "foreground": "var(url)"
+    },
+    {
+      "name": "Markdown Link URL Path Separator",
+      "scope": "markup.underline.link punctuation.separator.path, markup.underline.link punctuation.separator.path.markdown, punctuation.separator.path.markdown",
+      "foreground": "var(url)"
+    },
+    {
+      "name": "Markdown Inline Autolink",
+      "scope": "markup.underline.link.markdown-gfm",
+      "foreground": "var(link_text)",
+      "font_style": "underline"
+    },
+    {
+      "name": "Markdown Inline Autolink Path Separator",
+      "scope": "markup.underline.link.markdown-gfm punctuation.separator.path.markdown, meta.link.inet punctuation.separator.path.markdown, meta.link.inet.markdown punctuation.separator.path.markdown",
+      "foreground": "var(link_text)"
+    },
+    {
+      "name": "Markdown Link Punctuation",
+      "scope": "punctuation.definition.link.begin, punctuation.definition.link.begin.markdown, punctuation.definition.link.end, punctuation.definition.link.end.markdown, punctuation.definition.metadata.begin, punctuation.definition.metadata.begin.markdown, punctuation.definition.metadata.end, punctuation.definition.metadata.end.markdown, punctuation.definition.image, punctuation.definition.image.markdown",
+      "foreground": "var(link_punct)"
+    },
+    {
+      "name": "Markdown Footnote Reference ID",
+      "scope": "meta.link.reference.literal.footnote-id, meta.link.reference.literal.footnote-id.markdown, entity.name.reference.link, entity.name.reference.link.markdown",
+      "foreground": "var(h5)"
+    },
+    {
+      "name": "Markdown Footnote Definition Punctuation",
+      "scope": "punctuation.definition.reference.begin, punctuation.definition.reference.begin.markdown, punctuation.definition.reference.end, punctuation.definition.reference.end.markdown",
+      "foreground": "var(link_punct)"
     },
     {
       "name": "Markdown Table",
@@ -167,14 +297,15 @@
     },
     {
       "name": "Markdown Horizontal Rule",
-      "scope": "meta.separator, meta.separator.markdown, punctuation.definition.metadata.markdown",
-      "foreground": "#bd93f9",
+      "scope": "meta.separator, meta.separator.markdown, punctuation.definition.thematic-break, punctuation.definition.thematic-break.markdown",
+      "foreground": "var(h2)",
+      "background": "var(hr_bg)",
       "font_style": "bold"
     },
     {
       "name": "Comment",
       "scope": "comment",
-      "foreground": "#6272a4",
+      "foreground": "var(link_punct)",
       "font_style": "italic"
     },
     {
@@ -226,7 +357,7 @@
     {
       "name": "Punctuation (Definition / Separator)",
       "scope": "punctuation.definition, punctuation.separator",
-      "foreground": "#f8f8f2"
+      "foreground": "var(code_fg)"
     }
   ]
 }
