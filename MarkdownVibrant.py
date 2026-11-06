@@ -5,8 +5,8 @@ _vendor = os.path.join(os.path.dirname(__file__), 'vendor')
 if _vendor not in sys.path:
     sys.path.insert(0, _vendor)
 
-from .renderer import CustomRenderer
-import mistune
+from .renderer import CustomRenderer, PRESET
+from wenmode import Wenmode
 import sublime
 import sublime_plugin
 import re
@@ -16,6 +16,8 @@ PREVIEW_SHEETS = {}
 PREVIEW_VIEWS = {}  # sheet_id -> view_id (reverse lookup)
 
 _SETTINGS = sublime.load_settings("MarkdownVibrant.sublime-settings")
+
+_wen = Wenmode(PRESET, renderer=CustomRenderer())
 
 def _close_preview_sheet(view_id, sheet_id):
     """Close a preview HTML sheet and clean up tracking dicts."""
@@ -28,16 +30,8 @@ def _close_preview_sheet(view_id, sheet_id):
     PREVIEW_VIEWS.pop(sheet_id, None)
 
 
-
 def _render_preview_html(text):
-    renderer = CustomRenderer()
-    markdown = mistune.create_markdown(
-        renderer=renderer,
-        escape=False,
-        plugins=["strikethrough", "footnotes", "table"],
-    )
-    body_html = markdown(text)
-    assert isinstance(body_html, str)
+    body_html = _wen.render(text)
     preview_css = sublime.load_resource("Packages/MarkdownVibrant/preview.css")
     full_html = (
         "<html>\n<head>\n<style>\n"
@@ -60,7 +54,7 @@ class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
     Uses the "split view" mechanism (a temporary pane within the same group)
     instead of creating a new column group, so the existing window layout is preserved.
 
-    Uses Mistune parser for rendering.
+    Uses the Wenmode parser for rendering.
     """
     def run(self, edit):
         window = self.view.window()
@@ -75,7 +69,7 @@ class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
             sublime.status_message("Markdown Preview Closed")
             return
 
-        # Render initial HTML via Mistune
+        # Render initial HTML via Wenmode
         full_text = self.view.substr(sublime.Region(0, self.view.size()))
         html_content = _render_preview_html(full_text)
         doc_title = self.view.file_name() or "Markdown Preview"

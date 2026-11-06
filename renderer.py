@@ -1,90 +1,99 @@
 import os
 import re
 import sys
-from typing import Any, List, Optional
+from typing import Any
 
 _vendor = os.path.join(os.path.dirname(__file__), 'vendor')
 if _vendor not in sys.path:
     sys.path.insert(0, _vendor)
 
-import mistune
+from wenmode import HTMLRenderer
+from wenmode.nodes import List, ListItem, Paragraph, Table, TableRow
+from wenmode.presets import github
+from wenmode.renderers import RenderContext
+
+# Shared rule set: GFM (tables, task lists, strikethrough, autolinks,
+# footnotes) with raw HTML passthrough handled by the renderer.
+PRESET = github()
 
 
-class CustomRenderer(mistune.HTMLRenderer):
-    def list(self, text: str, ordered: bool, **attrs: Any) -> str:
-        if not ordered:
-            return "<ul>\n" + text + "</ul>\n"
-        start = attrs.get("start")
-        idx = int(start) if start is not None else 1
-        items = _split_top_level_items(text)
-        out = [f'<div class="ol-item">{idx + i}. {item}</div>' for i, item in enumerate(items)]
-        return '<div class="ol">\n' + "\n".join(out) + '\n</div>\n'
+class CustomRenderer(HTMLRenderer):
+    """Wenmode equivalent of renderer.CustomRenderer (mistune.HTMLRenderer).
 
-    def table(self, text: str) -> str:
-        rows = [r.split("\x01") for r in text.split("\x00") if r]
-        if not rows:
-            return ""
-        for r in rows:
-            if r and r[-1] == "":
-                r.pop()
-        ncols = max(len(r) for r in rows) if rows else 0
-        for r in rows:
-            while len(r) < ncols:
-                r.append("")
-        _strip = lambda s: re.sub(r"<[^>]+>", "", s)
-        widths = [max(len(_strip(r[i])) for r in rows) for i in range(ncols)]
-        def _pad(cell, w):
-            stripped = _strip(cell)
-            return cell + " " * (w - len(stripped))
-        def fmt_row(r):
-            return "│ " + " │ ".join(_pad(r[i], widths[i]) for i in range(ncols)) + " │"
-        top = "┌" + "┬".join("─" * (w + 2) for w in widths) + "┐"
-        mid = "├" + "┼".join("─" * (w + 2) for w in widths) + "┤"
-        bot = "└" + "┴".join("─" * (w + 2) for w in widths) + "┘"
-        out = [top]
-        for idx_r, r in enumerate(rows):
-            out.append(fmt_row(r))
-            if idx_r == 0:
-                out.append(mid)
-        out.append(bot)
-        return '<div class="ascii-table">\n' + "\n".join(out) + '\n</div>\n'
+    Handlers are registered on the instance so the shared HTMLRenderer class
+    dispatch table stays untouched.
+    """
 
-    def table_head(self, text: str) -> str:
-        return text + "\x00"
-
-    def table_body(self, text: str) -> str:
-        return text
-
-    def table_row(self, text: str) -> str:
-        return text + "\x00"
-
-    def table_cell(self, text: str, align: Optional[str] = None, head: bool = False) -> str:
-        return text + "\x01"
+    def __init__(self) -> None:
+        super().__init__(escape=False, sanitize_urls=False, sanitize_attrs=False)
+        self.register_handler('list', render_list)
+        self.register_handler('table', render_table)
 
 
-def _split_top_level_items(text: str) -> list:
-    """Split rendered list HTML into top-level <li> items, preserving nested sub-lists."""
-    items = []
-    depth = 0
-    current = []
-    i = 0
-    while i < len(text):
-        if text[i:].startswith("<li>"):
-            if depth == 0:
-                current = []
+def render_list(renderer: HTMLRenderer, node: List, context: RenderContext) -> str:
+    items = [_render_list_item(renderer, item, node.spread, context) for item in node.children]
+    if not node.ordered:
+        text = ''.join(f'<li>{inner}</li>\n' for inner in items)
+        return "<ul>\n" + text + "</ul>\n"
+    start = node.start if node.start is not None else 1
+    out = [f'<div class="ol-item">{start + i}. {inner}</div>' for i, inner in enumerate(items)]
+    return '<div class="ol">\n' + "\n".join(out) + '\n</div>\n'
+
+
+def _render_list_item(
+    renderer: HTMLRenderer,
+    item: ListItem,
+    spread: bool,
+    context: RenderContext,
+) -> str:
+    """Render the inner content of one <li>, like mistune's list_item()."""
+    parts: list[str] = []
+    if item.checked is not None:
+        parts.append('[x] ' if item.checked else '[ ] ')
+    if not spread and item.children and isinstance(item.children[0], Paragraph):
+        rendered: list[str] = []
+        for index, child in enumerate(item.children):
+            if isinstance(child, Paragraph):
+                rendered.append(renderer.render_children(child.children, context))
+                if index < len(item.children) - 1:
+                    rendered.append('\n')
             else:
-                current.append(text[i:i+4])
-            depth += 1
-            i += 4
-        elif text[i:].startswith("</li>"):
-            depth -= 1
-            if depth == 0:
-                items.append("".join(current))
-            else:
-                current.append(text[i:i+5])
-            i += 5
-        else:
-            if depth > 0:
-                current.append(text[i])
-            i += 1
-    return items
+                rendered.append(renderer.render_node(child, context))
+        parts.append(''.join(rendered))
+    else:
+        parts.append(''.join(renderer.render_node(child, context) for child in item.children))
+    return ''.join(parts)
+
+
+def render_table(renderer: HTMLRenderer, node: Table, context: RenderContext) -> str:
+    rows = [
+        [renderer.render_children(cell.children, context) for cell in row.children]
+        for row in node.children
+    ]
+    return _render_ascii_table(rows)
+
+
+def _render_ascii_table(rows: list) -> str:
+    if not rows:
+        return ""
+    ncols = max(len(r) for r in rows)
+    for r in rows:
+        while len(r) < ncols:
+            r.append("")
+    _strip = lambda s: re.sub(r"<[^>]+>", "", s)
+    widths = [max(len(_strip(r[i])) for r in rows) for i in range(ncols)]
+    def _pad(cell, w):
+        stripped = _strip(cell)
+        return cell + " " * (w - len(stripped))
+    def fmt_row(r):
+        return "│ " + " │ ".join(_pad(r[i], widths[i]) for i in range(ncols)) + " │"
+    top = "┌" + "┬".join("─" * (w + 2) for w in widths) + "┐"
+    mid = "├" + "┼".join("─" * (w + 2) for w in widths) + "┤"
+    bot = "└" + "┴".join("─" * (w + 2) for w in widths) + "┘"
+    out = [top]
+    for idx_r, r in enumerate(rows):
+        out.append(fmt_row(r))
+        if idx_r == 0:
+            out.append(mid)
+    out.append(bot)
+    return '<div class="ascii-table">\n' + "\n".join(out) + '\n</div>\n'

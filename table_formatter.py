@@ -6,10 +6,29 @@ _vendor = os.path.join(os.path.dirname(__file__), 'vendor')
 if _vendor not in sys.path:
     sys.path.insert(0, _vendor)
 
-import mistune
-from mistune.plugins.table import parse_nptable, parse_table, table as table_plugin
+from .renderer import PRESET
+from wenmode import Parser
+from wenmode.rules import BlockRule
 import sublime
 import sublime_plugin
+
+
+def _block_scan_rules():
+    """PRESET reduced to its block rules: enough to find top-level tables
+    (code blocks, quotes and lists still consume their lines) without
+    paying for inline parsing."""
+    rules = []
+    for rule in PRESET:
+        if isinstance(rule, type):
+            if issubclass(rule, BlockRule):
+                rules.append(rule)
+        elif isinstance(rule, BlockRule):
+            rules.append(rule)
+    return rules
+
+
+_BLOCK_SCAN_RULES = _block_scan_rules()
+_PARSER = Parser(_BLOCK_SCAN_RULES, positions=True)
 
 
 _CENTER = re.compile(r":-+:")
@@ -65,53 +84,38 @@ def find_tables(text):
     *text*, the per-column alignment (``aligns``, from the separator row)
     and the cell contents of header and body rows (``rows``).
     Tables inside fenced code blocks, block quotes or lists are ignored.
+
+    Wenmode only parses GFM pipe tables; mistune's non-piped "nptable"
+    syntax is not detected.
     """
     if "\r" in text:
         return []
 
     src = text if text.endswith("\n") else text + "\n"
-    tables = []
+    root = _PARSER.parse(src)
 
-    def record(start, pos, state, token_count):
-        if pos is None or state.parent is not None:
-            return
-        if not any(t.get("type") == "table" for t in state.tokens[token_count:]):
-            return
-        end = min(pos, len(text))
+    tables = []
+    for node in root.children:
+        if node.type != "table" or node.position is None:
+            continue
+        start = node.position.start
+        end = min(node.position.end, len(text))
         lines = [line for line in text[start:end].split("\n") if line.strip()]
         if len(lines) < 2:
-            return
+            continue
         cell_rows = [_split_row(line) for line in lines]
         aligns = [_alignment(cell) for cell in cell_rows[1]]
         if "invalid" in aligns:
-            return
+            continue
         ncols = len(cell_rows[0])
         if any(len(cells) != ncols for cells in cell_rows):
-            return
+            continue
         tables.append({
             "start": start,
             "end": end,
             "aligns": aligns,
             "rows": cell_rows[:1] + cell_rows[2:],
         })
-
-    def collector(md):
-        def wrap(parse):
-            def parse_and_record(block, m, state):
-                start = state.cursor
-                token_count = len(state.tokens)
-                pos = parse(block, m, state)
-                record(start, pos, state, token_count)
-                return pos
-            return parse_and_record
-
-        md.block.register("table", None, wrap(parse_table))
-        md.block.register("nptable", None, wrap(parse_nptable))
-
-    md = mistune.Markdown(renderer=None, plugins=[table_plugin, collector])
-    state = mistune.BlockState()
-    state.process(src)
-    md.block.parse(state)
     return tables
 
 
