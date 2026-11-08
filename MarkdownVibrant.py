@@ -14,6 +14,7 @@ import re
 # view_id -> (preview_sheet_id, source_view)
 PREVIEW_SHEETS = {}
 PREVIEW_VIEWS = {}  # sheet_id -> view_id (reverse lookup)
+_SKIP_NEXT_AUTOFORMAT = set()  # view ids: skip table autoformat on the next save
 
 _SETTINGS = sublime.load_settings("MarkdownVibrant.sublime-settings")
 
@@ -56,6 +57,9 @@ class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
 
     Uses the Wenmode parser for rendering.
     """
+    def is_visible(self):
+        return self.view.match_selector(0, "text.html.markdown")
+
     def run(self, edit):
         window = self.view.window()
         if not window:
@@ -93,6 +97,17 @@ class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
         sublime.status_message("Markdown Split Live Preview Opened")
 
 
+class MarkdownVibrantSaveWithoutFormatCommand(sublime_plugin.TextCommand):
+    """Saves the view while skipping the on-save table autoformat once."""
+
+    def is_visible(self):
+        return self.view.match_selector(0, "text.html.markdown")
+
+    def run(self, edit):
+        _SKIP_NEXT_AUTOFORMAT.add(self.view.id())
+        self.view.run_command("save")
+
+
 class MarkdownVibrantEventListener(sublime_plugin.EventListener):
     """
     Listens for markdown text edits and automatically refreshes the HTML live preview.
@@ -102,11 +117,17 @@ class MarkdownVibrantEventListener(sublime_plugin.EventListener):
             sublime.set_timeout(self._close_singled_out_previews, 50)
 
     def on_pre_save(self, view):
+        if view.id() in _SKIP_NEXT_AUTOFORMAT:
+            _SKIP_NEXT_AUTOFORMAT.discard(view.id())
+            return
         if not _SETTINGS.get("table_autoformat_on_save", True):
             return
         if not view.match_selector(0, "text.html.markdown"):
             return
         view.run_command("markdown_vibrant_format_table", {"format_all": True})
+
+    def on_post_save(self, view):
+        _SKIP_NEXT_AUTOFORMAT.discard(view.id())
 
     def _close_singled_out_previews(self):
         if not PREVIEW_SHEETS:
@@ -182,6 +203,9 @@ class ToggleMarkdownTaskCommand(sublime_plugin.TextCommand):
     """
     Toggles Markdown task checkbox [ ] <-> [x] on current line(s).
     """
+    def is_visible(self):
+        return self.view.match_selector(0, "text.html.markdown")
+
     def run(self, edit):
         for sel in self.view.sel():
             line_region = self.view.line(sel)

@@ -14,13 +14,14 @@ An all-encompassing, high-contrast, feature-packed Markdown plugin for Sublime T
 2. **Native Side-by-Side HTML Live Preview**:
    - Live renders Markdown directly within Sublime Text in a split pane without opening an external browser window or external WebKit process.
    - Instant re-rendering as you type.
-   - Uses Sublime Text 4's native `window.new_html_sheet` API and the fast `mistune` Python Markdown parser.
+   - Uses Sublime Text 4's native `window.new_html_sheet` API and the fast `wenmode` Python Markdown parser.
 
 4. **Built-in Markdown Enhancements**:
    - **GitHub-style Callouts**: Renders `[!NOTE]`, `[!WARNING]`, `[!TIP]`, `[!IMPORTANT]`, `[!CAUTION]` blockquotes with badges and accent borders.
    - **Task Checkboxes**: Easy toggling of `[ ]` and `[x]` items (`ToggleTaskCheckboxCommand`).
    - **Table of Contents (TOC) Generator**: Scans headings and inserts anchor links at cursor position (`GenerateMarkdownTocCommand`).
    - **Table Formatter**: Aligns pipe tables on demand (`Ctrl+Alt+Shift+T`) or automatically on save. Understands escaped pipes, rows with or without outer pipes, and `:---`/`:---:`/`---:` justification; tables inside code blocks are left alone. Table detection shares the same Markdown parser as the live preview, so the two features always agree on what a table is. (Inspired by the abandoned *Markdown Table Formatter* package. :( )
+   - **Save Without Table Formatting** (`MarkdownVibrantSaveWithoutFormatCommand`, in the right-click menu): saves the file while skipping the on-save table autoformat once.
 
 ## Other Markdown Flavors
 
