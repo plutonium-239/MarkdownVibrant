@@ -18,35 +18,46 @@ An all-encompassing, high-contrast, feature-packed Markdown plugin for Sublime T
 
 4. **Built-in Markdown Enhancements**:
    - **GitHub-style Callouts**: Renders `[!NOTE]`, `[!WARNING]`, `[!TIP]`, `[!IMPORTANT]`, `[!CAUTION]` blockquotes with badges and accent borders.
-   - **Task Checkboxes**: Easy toggling of `[ ]` and `[x]` items (`ToggleTaskCheckboxCommand`).
-   - **Table of Contents (TOC) Generator**: Scans headings and inserts anchor links at cursor position (`GenerateMarkdownTocCommand`).
+   - **Task Checkboxes**: Easy toggling of `[ ]` and `[x]` items (`MarkdownVibrantToggleTaskCommand`).
+   - **Table of Contents (TOC) Generator**: Scans headings and inserts anchor links at cursor position (`MarkdownVibrantGenerateTocCommand`).
    - **Table Formatter**: Aligns pipe tables on demand (`Ctrl+Alt+Shift+T`) or automatically on save. Understands escaped pipes, rows with or without outer pipes, and `:---`/`:---:`/`---:` justification; tables inside code blocks are left alone. Table detection shares the same Markdown parser as the live preview, so the two features always agree on what a table is. (Inspired by the abandoned *Markdown Table Formatter* package. :( )
    - **Save Without Table Formatting** (`MarkdownVibrantSaveWithoutFormatCommand`, in the right-click menu): saves the file while skipping the on-save table autoformat once.
 
-## Other Markdown Flavors
+## Keybindings and Commands
 
-The theme ships settings files for the `Markdown`, `MultiMarkdown`, and `Markdown Extended` syntaxes. If you use another markdown-family syntax, create a file `Packages/User/<Syntax Name>.sublime-settings` containing:
+| Command                    | Windows / Linux    | macOS             | Command Name |
+|:---------------------------|:-------------------|:------------------|:-------------|
+| Toggle Split Live Preview  | `Ctrl+Alt+M`       | `Cmd+Option+M`    |              |
+| Toggle Task Checkbox       | `Ctrl+Alt+C`       | `Cmd+Option+C`    |              |
+| Generate Table of Contents | `Ctrl+Alt+G`       | `Cmd+Option+G`    |              |
+| Format Markdown Tables     | `Ctrl+Alt+Shift+T` | `Cmd+Alt+Shift+T` |              |
+
+## Configuration
+
+Configured in `MarkdownVibrant.sublime-settings`:
+
+### Preview Settings
 
 ```json
 {
-   "color_scheme": "Packages/MarkdownVibrant/MarkdownVibrant.sublime-color-scheme"
+   "preview_update_delay_ms": 150,
+   "preview_background": "#0f111a",
+   "preview_font_size_px": 14,
+   "preview_enable_callouts": true,
+   "preview_auto_close_singled_out": true,
+   "preview_debug_write_html": false,
 }
 ```
 
-Settings in `Packages/User/` always take precedence over the ones this package ships, so you can also use the same file to opt out for a specific syntax by setting your own `color_scheme`.
+- `preview_update_delay_ms`: debounce for the live preview. While you are typing, re-rendering waits until this many milliseconds pass without a change, so the preview refreshes once per pause instead of on every keystroke. Set to `0` to refresh on every change.
+- `preview_background`: background color of the preview pane (any CSS color, e.g. `#0f111a` or `white`).
+- `preview_font_size_px`: base font size of the preview. Everything scales relative to it (headings, code, tables).
+- `preview_enable_callouts`: render GitHub-style *admonitions*; `[!NOTE]` / `[!TIP]` / `[!IMPORTANT]` / `[!WARNING]` / `[!CAUTION]` blockquotes as colored callout boxes in the preview. Affects the preview only.
+- `preview_auto_close_singled_out`: close the split preview automatically when its source view is no longer part of the window's selected sheets.
+- `preview_debug_write_html`: write every rendered preview to `last_output.html` in the package folder, for debugging the HTML output. please dont forget to turn this off, unnecessary writes will wear out your disk very quickly!
 
-## Keybindings
 
-| Command                    | Windows / Linux    | macOS             |
-|:---------------------------|:-------------------|:------------------|
-| Toggle Split Live Preview  | `Ctrl+Alt+M`       | `Cmd+Option+M`    |
-| Toggle Task Checkbox       | `Ctrl+Alt+C`       | `Cmd+Option+C`    |
-| Generate Table of Contents | `Ctrl+Alt+G`       | `Cmd+Option+G`    |
-| Format Markdown Tables     | `Ctrl+Alt+Shift+T` | `Cmd+Alt+Shift+T` |
-
-## Table Formatting Settings
-
-Configured in `MarkdownVibrant.sublime-settings`:
+### Table Formatting Settings
 
 ```json
 {
@@ -62,5 +73,16 @@ Configured in `MarkdownVibrant.sublime-settings`:
 - `table_default_justification`: `LEFT`, `CENTER` or `RIGHT`, applied to columns whose separator has no colons.
 - `table_autoformat_on_save`: reformat all tables when a Markdown file is saved.
 
-With a selection active, only the tables intersecting it are formatted; the formatted tables are then selected so the change is visible.
+With a selection active, only the tables intersecting it are formatted. The formatted tables are selected so the change is visible.
 
+### Other Markdown Flavors
+
+The theme ships settings files for the `Markdown`, `MultiMarkdown`, and `Markdown Extended` syntaxes. If you use another markdown-family syntax, create a file `Packages/User/<Syntax Name>.sublime-settings` containing:
+
+```json
+{
+   "color_scheme": "Packages/MarkdownVibrant/MarkdownVibrant.sublime-color-scheme"
+}
+```
+
+Settings in `Packages/User/` always take precedence over the ones this package ships, so you can also use the same file to opt out for a specific syntax by setting your own `color_scheme`.

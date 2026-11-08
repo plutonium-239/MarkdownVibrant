@@ -42,12 +42,11 @@ Three Python modules, all loaded by Sublime:
 
 ### Known inconsistencies / dead references
 
-- The README mentions `ToggleTaskCheckboxCommand`; the actual class is `ToggleMarkdownTaskCommand`.
-- `Main.sublime-menu` still references the command `apply_markdown_vibrant_theme`, which no longer exists (removed in commit a73ad64). That menu entry is dead.
+None currently.
 
 ## Sublime conventions used here
 
-- Command names are derived from class names: `MarkdownLivePreviewCommand` -> `markdown_live_preview` (CamelCase class minus `Command`, snake_cased). Follow this when adding commands.
+- Command names are derived from class names: `MarkdownVibrantLivePreviewCommand` -> `markdown_vibrant_live_preview` (CamelCase class minus `Command`, snake_cased). All commands are prefixed `markdown_vibrant_`. Follow this when adding commands.
 - All keybindings (`Default.sublime-keymap`, `Default (OSX).sublime-keymap`) are gated by a context selector `text.html.markdown`, so they only fire in Markdown views. Keep the two platform files in sync (macOS uses `super+`, others use `ctrl+`).
 - The color scheme is auto-applied per syntax via `Markdown.sublime-settings`, `MultiMarkdown.sublime-settings`, and `Markdown Extended.sublime-settings`, each just setting `"color_scheme"` to the package's `.sublime-color-scheme`.
 - User-facing settings live in `MarkdownVibrant.sublime-settings` and are read through a single module-level `_SETTINGS` object in `MarkdownVibrant.py`. Sublime automatically caches settings objects — `sublime.load_settings()` returns the same live instance and never re-reads from disk — so `.get()` is always cheap and always reflects current values.

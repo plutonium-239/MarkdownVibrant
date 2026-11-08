@@ -1,17 +1,17 @@
 [
     {
         "keys": ["ctrl+alt+m"],
-        "command": "markdown_live_preview",
+        "command": "markdown_vibrant_live_preview",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
     },
     {
         "keys": ["ctrl+alt+c"],
-        "command": "toggle_markdown_task",
+        "command": "markdown_vibrant_toggle_task",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
     },
     {
         "keys": ["ctrl+alt+g"],
-        "command": "generate_markdown_toc",
+        "command": "markdown_vibrant_generate_toc",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
     },
     {

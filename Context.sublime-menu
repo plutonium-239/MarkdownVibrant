@@ -2,11 +2,11 @@
     { "caption": "-" },
     {
         "caption": "Markdown: Toggle Live Split Preview",
-        "command": "markdown_live_preview"
+        "command": "markdown_vibrant_live_preview"
     },
     {
         "caption": "Markdown: Toggle Checkbox",
-        "command": "toggle_markdown_task"
+        "command": "markdown_vibrant_toggle_task"
     },
     {
         "caption": "Markdown: Save Without Table Formatting",

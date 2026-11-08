@@ -1,5 +1,7 @@
 import sys
 import os
+import time
+from functools import partial, wraps
 
 _vendor = os.path.join(os.path.dirname(__file__), 'vendor')
 if _vendor not in sys.path:
@@ -7,6 +9,7 @@ if _vendor not in sys.path:
 
 from .renderer import CustomRenderer, PRESET
 from wenmode import Wenmode
+from wenmode.plugins import github_alert, mark, superscript, subscript
 import sublime
 import sublime_plugin
 import re
@@ -18,7 +21,66 @@ _SKIP_NEXT_AUTOFORMAT = set()  # view ids: skip table autoformat on the next sav
 
 _SETTINGS = sublime.load_settings("MarkdownVibrant.sublime-settings")
 
-_wen = Wenmode(PRESET, renderer=CustomRenderer())
+def _render_alert(renderer, node, context):
+    """Draw a GitHub-alert node, honoring `preview_enable_callouts` live:
+    a styled callout box when on, a plain blockquote (with the `[!NAME]`
+    marker re-emitted) when off."""
+    if _SETTINGS.get("preview_enable_callouts", True):
+        return github_alert.render_github_html_alert(renderer, node, context)
+    marker = f"<p>[!{node.name.upper()}]</p>\n"
+    return "<blockquote>\n" + marker + renderer.render_children(node.children, context) + "</blockquote>\n"
+
+
+_wen = Wenmode(PRESET, renderer=CustomRenderer(), plugins=[mark, superscript, subscript, github_alert.configure()])
+_wen.renderer.register_handler("githubAlert", _render_alert)
+
+
+def debounced(delay_in_ms, sync=False):
+    """Delay calls to an event hook until it wasn't triggered for n ms.
+
+    *delay_in_ms* is a number, or a callable returning one, so the delay
+    can be read live from settings. Adapted from
+    https://forum.sublimetext.com/t/70017.
+    """
+    set_timeout = sublime.set_timeout if sync else sublime.set_timeout_async
+
+    def decorator(func):
+        to_call_times = {}
+
+        def _debounced_callback(view, callback):
+            vid = view.id()
+            threshold = to_call_times.get(vid)
+            if not threshold:
+                return
+            if not view.is_valid():
+                del to_call_times[vid]
+                return
+            diff = threshold - time.time() * 1000
+            if diff > 0:
+                set_timeout(partial(_debounced_callback, view, callback), diff)
+            else:
+                del to_call_times[vid]
+                callback()
+
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            view = self.view if hasattr(self, 'view') else args[0]
+            if not view.is_valid():
+                return
+            delay = delay_in_ms() if callable(delay_in_ms) else delay_in_ms
+            delay = max(delay, 0)
+            vid = view.id()
+            busy = vid in to_call_times
+            to_call_times[vid] = time.time() * 1000 + delay
+            if busy:
+                return
+            callback = partial(func, self, *args, **kwargs)
+            set_timeout(partial(_debounced_callback, view, callback), delay)
+
+        return wrapper
+
+    return decorator
+
 
 def _close_preview_sheet(view_id, sheet_id):
     """Close a preview HTML sheet and clean up tracking dicts."""
@@ -34,10 +96,17 @@ def _close_preview_sheet(view_id, sheet_id):
 def _render_preview_html(text):
     body_html = _wen.render(text)
     preview_css = sublime.load_resource("Packages/MarkdownVibrant/preview.css")
+    font_size = _SETTINGS.get("preview_font_size_px", 14)
+    background = _SETTINGS.get("preview_background", "#0f111a")
+    override_css = (
+        f"html {{ font-size: {font_size}px; }}\n"
+        f"body {{ background-color: {background}; }}\n"
+    )
     full_html = (
         "<html>\n<head>\n<style>\n"
         + preview_css
-        + "\n</style>\n</head>\n<body>\n"
+        + "\n" + override_css
+        + "</style>\n</head>\n<body>\n"
         + body_html
         + "\n</body>\n</html>"
     )
@@ -48,7 +117,7 @@ def _render_preview_html(text):
     return full_html
 
 
-class MarkdownLivePreviewCommand(sublime_plugin.TextCommand):
+class MarkdownVibrantLivePreviewCommand(sublime_plugin.TextCommand):
     """
     Toggles a live HTML Markdown preview in Sublime Text 4 using window.new_html_sheet.
 
@@ -113,7 +182,7 @@ class MarkdownVibrantEventListener(sublime_plugin.EventListener):
     Listens for markdown text edits and automatically refreshes the HTML live preview.
     """
     def on_activated_async(self, view):
-        if _SETTINGS.get("auto_close_singled_out_preview", True):
+        if _SETTINGS.get("preview_auto_close_singled_out", True):
             sublime.set_timeout(self._close_singled_out_previews, 50)
 
     def on_pre_save(self, view):
@@ -148,6 +217,7 @@ class MarkdownVibrantEventListener(sublime_plugin.EventListener):
             if source_sheet.id() not in selected_ids:
                 _close_preview_sheet(view_id, sheet_id)
 
+    @debounced(lambda: _SETTINGS.get("preview_update_delay_ms", 150))
     def on_modified_async(self, view):
         view_id = view.id()
         if view_id not in PREVIEW_SHEETS:
@@ -170,7 +240,7 @@ class MarkdownVibrantEventListener(sublime_plugin.EventListener):
             _close_preview_sheet(view_id, PREVIEW_SHEETS[view_id][0])
 
 
-class GenerateMarkdownTocCommand(sublime_plugin.TextCommand):
+class MarkdownVibrantGenerateTocCommand(sublime_plugin.TextCommand):
     """
     Generates a Markdown Table of Contents from headings in the active document.
     """
@@ -199,7 +269,7 @@ class GenerateMarkdownTocCommand(sublime_plugin.TextCommand):
         sublime.status_message("Table of Contents Inserted")
 
 
-class ToggleMarkdownTaskCommand(sublime_plugin.TextCommand):
+class MarkdownVibrantToggleTaskCommand(sublime_plugin.TextCommand):
     """
     Toggles Markdown task checkbox [ ] <-> [x] on current line(s).
     """

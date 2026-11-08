@@ -8,21 +8,16 @@
                 "children": [
                     {
                         "caption": "Toggle Side-by-Side Live Preview",
-                        "command": "markdown_live_preview"
+                        "command": "markdown_vibrant_live_preview"
                     },
                     { "caption": "-" },
                     {
                         "caption": "Generate Table of Contents (TOC)",
-                        "command": "generate_markdown_toc"
+                        "command": "markdown_vibrant_generate_toc"
                     },
                     {
                         "caption": "Toggle Task Checkbox ([ ] / [x])",
-                        "command": "toggle_markdown_task"
-                    },
-                    { "caption": "-" },
-                    {
-                        "caption": "Apply Vibrant Color Scheme",
-                        "command": "apply_markdown_vibrant_theme"
+                        "command": "markdown_vibrant_toggle_task"
                     }
                 ]
             }

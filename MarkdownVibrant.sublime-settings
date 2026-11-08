@@ -2,9 +2,9 @@
     "preview_update_delay_ms": 150,
     "preview_background": "#0f111a",
     "preview_font_size_px": 14,
-    "enable_callouts": true,
-    "auto_close_singled_out_preview": true,
-    "preview_debug_write_html": false,
+    "preview_enable_callouts": true,
+    "preview_auto_close_singled_out": true,
+    "preview_debug_write_html": true,
 
     "table_margin": 1,
     "table_padding": 0,

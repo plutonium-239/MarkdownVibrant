@@ -4,7 +4,7 @@ body {
     font-family: system-ui, -apple-system, sans-serif;
     padding: 16px 20px;
     line-height: 1.6;
-    font-size: 14px;
+    font-size: 1rem; /* 14px/14px */
 }
 
 h1 {
@@ -12,7 +12,7 @@ h1 {
     border-bottom: 2px solid #ff007f;
     padding-bottom: 6px;
     margin-top: 20px;
-    font-size: 22px;
+    font-size: 1.571rem; /* 22px/14px */
 }
 
 h2 {
@@ -20,31 +20,31 @@ h2 {
     border-bottom: 1px solid #323859;
     padding-bottom: 4px;
     margin-top: 18px;
-    font-size: 18px;
+    font-size: 1.286rem; /* 18px/14px */
 }
 
 h3 {
     color: #00f5d4;
     margin-top: 16px;
-    font-size: 16px;
+    font-size: 1.143rem; /* 16px/14px */
 }
 
 h4 {
     color: #50fa7b;
     margin-top: 14px;
-    font-size: 14px;
+    font-size: 1rem; /* 14px/14px */
 }
 
 h5 {
     color: #ffb86c;
     margin-top: 12px;
-    font-size: 13px;
+    font-size: 0.929rem; /* 13px/14px */
 }
 
 h6 {
     color: #ff5555;
     margin-top: 10px;
-    font-size: 12px;
+    font-size: 0.857rem; /* 12px/14px */
 }
 
 a {
@@ -108,7 +108,7 @@ pre {
 
 .ascii-table {
     font-family: monospace;
-    font-size: 13px;
+    font-size: 0.929rem; /* 13px/14px */
     border-radius: 6px;
     padding: 12px;
     overflow-x: auto;
@@ -120,5 +120,62 @@ pre {
 code {
     font-family: monospace;
     color: #f1fa8c;
-    font-size: 13px;
+    font-size: 0.929rem; /* 13px/14px */
+}
+
+.markdown-alert {
+    margin: 12px 0;
+    padding: 8px 12px;
+    background-color: #161824;
+    border-left: 4px solid #323859;
+    border-radius: 4px;
+}
+
+.markdown-alert-title {
+    font-weight: bold;
+    margin: 0 0 4px 0;
+}
+
+.markdown-alert p {
+    margin: 4px 0;
+}
+
+.markdown-alert-note .markdown-alert-title {
+    color: #58a6ff;
+}
+
+.markdown-alert-note {
+    border-left-color: #58a6ff;
+}
+
+.markdown-alert-tip .markdown-alert-title {
+    color: #3fb950;
+}
+
+.markdown-alert-tip {
+    border-left-color: #3fb950;
+}
+
+.markdown-alert-important .markdown-alert-title {
+    color: #bc8cff;
+}
+
+.markdown-alert-important {
+    border-left-color: #bc8cff;
+}
+
+.markdown-alert-warning .markdown-alert-title {
+    color: #d29922;
+}
+
+.markdown-alert-warning {
+    border-left-color: #d29922;
+}
+
+.markdown-alert-caution .markdown-alert-title {
+    color: #f85149;
+}
+
+.markdown-alert-caution {
+    border-left-color: #f85149;
 }
