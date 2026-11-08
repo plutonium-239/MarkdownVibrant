@@ -8,9 +8,5 @@
         "caption": "Markdown: Toggle Checkbox",
         "command": "markdown_vibrant_toggle_task"
     },
-    {
-        "caption": "Markdown: Save Without Table Formatting",
-        "command": "markdown_vibrant_save_without_format"
-    },
     { "caption": "-" }
 ]

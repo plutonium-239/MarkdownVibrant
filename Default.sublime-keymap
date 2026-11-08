@@ -4,16 +4,16 @@
         "command": "markdown_vibrant_live_preview",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
     },
-    {
-        "keys": ["ctrl+alt+c"],
-        "command": "markdown_vibrant_toggle_task",
-        "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
-    },
-    {
-        "keys": ["ctrl+alt+g"],
-        "command": "markdown_vibrant_generate_toc",
-        "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
-    },
+    // {
+    //     "keys": ["ctrl+alt+c"],
+    //     "command": "markdown_vibrant_toggle_task",
+    //     "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
+    // },
+    // {
+    //     "keys": ["ctrl+alt+g"],
+    //     "command": "markdown_vibrant_generate_toc",
+    //     "context": [{"key": "selector", "operator": "equal", "operand": "text.html.markdown"}]
+    // },
     {
         "keys": ["ctrl+alt+shift+t"],
         "command": "markdown_vibrant_format_table",

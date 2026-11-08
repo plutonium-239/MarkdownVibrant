@@ -1,0 +1,22 @@
+[
+    {
+        "caption": "Markdown Vibrant: Toggle Split Live Preview",
+        "command": "markdown_vibrant_live_preview"
+    },
+    {
+        "caption": "Markdown Vibrant: Format Tables",
+        "command": "markdown_vibrant_format_table"
+    },
+    {
+        "caption": "Markdown Vibrant: Toggle Task Checkbox",
+        "command": "markdown_vibrant_toggle_task"
+    },
+    {
+        "caption": "Markdown Vibrant: Generate Table of Contents",
+        "command": "markdown_vibrant_generate_toc"
+    },
+    {
+        "caption": "Markdown Vibrant: Save Without Table Formatting",
+        "command": "markdown_vibrant_save_without_format"
+    }
+]

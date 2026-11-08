@@ -35,10 +35,8 @@ _NONE = re.compile(r"-+")
 def _split_row(line):
     """Split a table row into cell texts, tolerating missing outer pipes."""
     text = line.strip()
-    if text.startswith("|"):
-        text = text[1:]
-    if text.endswith("|"):
-        text = text[:-1]
+    text = text.removeprefix("|")
+    text = text.removesuffix("|")
     cells = []
     start = 0
     for pos, char in enumerate(text):

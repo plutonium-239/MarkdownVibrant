@@ -20,17 +20,35 @@ An all-encompassing, high-contrast, feature-packed Markdown plugin for Sublime T
    - **GitHub-style Callouts**: Renders `[!NOTE]`, `[!WARNING]`, `[!TIP]`, `[!IMPORTANT]`, `[!CAUTION]` blockquotes with badges and accent borders.
    - **Task Checkboxes**: Easy toggling of `[ ]` and `[x]` items (`MarkdownVibrantToggleTaskCommand`).
    - **Table of Contents (TOC) Generator**: Scans headings and inserts anchor links at cursor position (`MarkdownVibrantGenerateTocCommand`).
-   - **Table Formatter**: Aligns pipe tables on demand (`Ctrl+Alt+Shift+T`) or automatically on save. Understands escaped pipes, rows with or without outer pipes, and `:---`/`:---:`/`---:` justification; tables inside code blocks are left alone. Table detection shares the same Markdown parser as the live preview, so the two features always agree on what a table is. (Inspired by the abandoned *Markdown Table Formatter* package. :( )
-   - **Save Without Table Formatting** (`MarkdownVibrantSaveWithoutFormatCommand`, in the right-click menu): saves the file while skipping the on-save table autoformat once.
+   - **Table Formatter**: Aligns pipe tables on demand (`Ctrl+Alt+Shift+T`) or automatically on save. Understands escaped pipes, rows with or without outer pipes, and `:---`/`:---:`/`---:` justification; tables inside code blocks are left alone. Table detection shares the same Markdown parser as the live preview. (Inspired by the abandoned [*Markdown Table Formatter*](https://github.com/bitwiser73/MarkdownTableFormatter) package. :( )
+   - **Save Without Formatting** (`MarkdownVibrantSaveWithoutFormatCommand`): saves the file while skipping the on-save table autoformat once.
 
-## Keybindings and Commands
+## Commands
 
-| Command                    | Windows / Linux    | macOS             | Command Name |
-|:---------------------------|:-------------------|:------------------|:-------------|
-| Toggle Split Live Preview  | `Ctrl+Alt+M`       | `Cmd+Option+M`    |              |
-| Toggle Task Checkbox       | `Ctrl+Alt+C`       | `Cmd+Option+C`    |              |
-| Generate Table of Contents | `Ctrl+Alt+G`       | `Cmd+Option+G`    |              |
-| Format Markdown Tables     | `Ctrl+Alt+Shift+T` | `Cmd+Alt+Shift+T` |              |
+| Command                       | Command Name                           |
+|:------------------------------|:---------------------------------------|
+| Toggle Split Live Preview     | `markdown_vibrant_live_preview`        |
+| Toggle Task Checkbox          | `markdown_vibrant_toggle_task`         |
+| Generate Table of Contents    | `markdown_vibrant_generate_toc`        |
+| Format Markdown Tables        | `markdown_vibrant_format_table`        |
+| Save Without Table Formatting | `markdown_vibrant_save_without_format` |
+
+## Keybindings
+
+| Command                   | Windows / Linux    | macOS             |
+|:--------------------------|:-------------------|:------------------|
+| Toggle Split Live Preview | `Ctrl+Alt+M`       | `Cmd+Option+M`    |
+| Format Markdown Tables    | `Ctrl+Alt+Shift+T` | `Cmd+Alt+Shift+T` |
+
+### Suggested
+
+These are included as comments in the package's keymap files. Add them to your user keybindings if you want them.
+
+| Command                    | Windows / Linux | macOS          |
+|:---------------------------|:----------------|:---------------|
+| Toggle Task Checkbox       | `Ctrl+Alt+C`    | `Cmd+Option+C` |
+| Generate Table of Contents | `Ctrl+Alt+G`    | `Cmd+Option+G` |
+
 
 ## Configuration
 
