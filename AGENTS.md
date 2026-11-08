@@ -4,13 +4,7 @@ Guidance for AI agents working in this repository.
 
 ## What this is
 
-A **Sublime Text 4 package** (not a standalone Python project). There is no build system, package manager manifest, or CI. The repo is symlinked into Sublime's Packages directory:
-
-```
-~/Library/Application Support/Sublime Text/Packages/MarkdownVibrant -> /Users/pu239/MarkdownVibrant
-```
-
-Because of the symlink, saving files reloads the plugin live (AutomaticPackageReloader is installed). Changes take effect immediately in the running editor.
+A **Sublime Text 4 package** (not a standalone Python project). There is no build system, package manager manifest, or CI.
 
 ## Python environments (important)
 
@@ -57,3 +51,12 @@ None currently.
 ## Files that are pure Sublime resources
 
 `MarkdownVibrant.sublime-color-scheme` (theme colors), `preview.css` (live-preview HTML styling), `Context.sublime-menu` (right-click menu), `Main.sublime-menu` (Tools menu). These are data, not code — edit carefully, they are JSON-with-comments and trailing-comma-tolerant (Sublime's format, stricter JSON parsers will reject them).
+
+## Local Development
+The repo is symlinked into Sublime's Packages directory:
+
+```
+~/Library/Application Support/Sublime Text/Packages/MarkdownVibrant -> /Users/pu239/MarkdownVibrant
+```
+
+Because of the symlink, saving files reloads the plugin live (AutomaticPackageReloader is installed). Changes take effect immediately in the running editor.

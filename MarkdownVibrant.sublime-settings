@@ -4,7 +4,7 @@
     "preview_font_size_px": 14,
     "preview_enable_callouts": true,
     "preview_auto_close_singled_out": true,
-    "preview_debug_write_html": true,
+    "preview_debug_write_html": false,
 
     "table_margin": 1,
     "table_padding": 0,

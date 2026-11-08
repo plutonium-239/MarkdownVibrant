@@ -104,3 +104,9 @@ The theme ships settings files for the `Markdown`, `MultiMarkdown`, and `Markdow
 ```
 
 Settings in `Packages/User/` always take precedence over the ones this package ships, so you can also use the same file to opt out for a specific syntax by setting your own `color_scheme`.
+
+## Thanks
+- To [paulilaaso/bit](https://github.com/paulilaaso/bit) for allowing me to design the awesome ascii art logo.
+- To [bitwiser73/MarkdownTableFormatter](https://github.com/bitwiser73/MarkdownTableFormatter) for being a great auto-format plugin, which made me want to edit markdown within the source more and more.
+- To [lepture/wenmode](https://github.com/lepture/wenmode) for the fast, modern, customizable markdown parser which I've used in this plugin. (and for mistune)
+- To the users of this plugin!
