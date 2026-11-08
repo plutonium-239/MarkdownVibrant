@@ -17,7 +17,7 @@ An all-encompassing, high-contrast, feature-packed Markdown plugin for Sublime T
    - Uses Sublime Text 4's native `window.new_html_sheet` API and the fast `wenmode` Python Markdown parser.
 
 4. **Built-in Markdown Enhancements**:
-   - **GitHub-style Callouts**: Renders `[!NOTE]`, `[!WARNING]`, `[!TIP]`, `[!IMPORTANT]`, `[!CAUTION]` blockquotes with badges and accent borders.
+   - **GitHub-style Callouts**: Renders `[!NOTE]`, `[!WARNING]`, `[!TIP]`, `[!IMPORTANT]`, `[!CAUTION]` admonitions with badges and accent borders.
    - **Task Checkboxes**: Easy toggling of `[ ]` and `[x]` items (`MarkdownVibrantToggleTaskCommand`).
    - **Table of Contents (TOC) Generator**: Scans headings and inserts anchor links at cursor position (`MarkdownVibrantGenerateTocCommand`).
    - **Table Formatter**: Aligns pipe tables on demand (`Ctrl+Alt+Shift+T`) or automatically on save. Understands escaped pipes, rows with or without outer pipes, and `:---`/`:---:`/`---:` justification; tables inside code blocks are left alone. Table detection shares the same Markdown parser as the live preview. (Inspired by the abandoned [*Markdown Table Formatter*](https://github.com/bitwiser73/MarkdownTableFormatter) package. :( )
