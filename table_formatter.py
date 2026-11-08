@@ -1,16 +1,11 @@
-import os
 import re
-import sys
 
-_vendor = os.path.join(os.path.dirname(__file__), 'vendor')
-if _vendor not in sys.path:
-    sys.path.insert(0, _vendor)
-
-from .renderer import PRESET
-from wenmode import Parser
-from wenmode.rules import BlockRule
 import sublime
 import sublime_plugin
+from wenmode import Parser
+from wenmode.rules import BlockRule
+
+from .renderer import PRESET
 
 
 def _block_scan_rules():

@@ -9,7 +9,7 @@ An all-encompassing, high-contrast, feature-packed Markdown plugin for Sublime T
 1. **A Vibrant Modern Color Scheme, applied automatically**:
    - Applies a vivid, accented color scheme designed to make typography fun. Made for humans that want to read.
    - Styled Headings (H1–H6), Bold, Italic, Code Fences, Blockquotes, Callouts, Tables, Links, and Task Checkboxes.
-   - `MarkdownVibrant.sublime-color-scheme` is applied the moment a Markdown file opens, via syntax-specific settings files shipped for the `Markdown`, `MultiMarkdown`, and `Markdown Extended` syntaxes (look at #other-markdown-flavors).
+   - `MarkdownVibrant.sublime-color-scheme` is applied the moment a Markdown file opens, via syntax-specific settings files shipped for the `Markdown`, `MultiMarkdown`, and `Markdown Extended` syntaxes ([some more detail here](#other-markdown-flavors)).
 
 2. **Native Side-by-Side HTML Live Preview**:
    - Live renders Markdown directly within Sublime Text in a split pane without opening an external browser window or external WebKit process.

@@ -14,9 +14,8 @@ Because of the symlink, saving files reloads the plugin live (AutomaticPackageRe
 
 ## Python environments (important)
 
-- **Plugin code runs inside Sublime Text's Python 3.14 plugin host**, selected via `.python-version` (`3.14`) in the package root.
-- `vendor/` contains a copy of wenmode 0.15.2 (pure Python, zero dependencies), and every entry-point module does `sys.path.insert(0, vendor)` at import time. Keep that preamble at the top of any new module that imports wenmode. wenmode is **not** available as a Package Control dependency, so the vendored copy is the delivery mechanism for real installs too.
-- Leftovers from the mistune era (intentionally not removed): `vendor/mistune/`, `vendor/typing_extensions.py`, and the mistune entry in `dependencies.json`. Nothing imports them anymore.
+- **Plugin code runs inside Sublime Text's Python 3.14 plugin host**, selected via `.python-version` (`3.14`) in the package root. Keep this file shipped — Sublime itself uses it to pick the plugin host.
+- **wenmode is a Package Control dependency** (listed in `dependencies.json`); there is no vendored copy anymore. Just `from wenmode import ...` — Package Control puts it on the plugin host's path.
 - Local dev uses `uv` (no `.venv`, no project file): run scripts with `uv run --python 3.14 python <script>`.
 - ruff has been used here (`.ruff_cache/` exists) but there is no config file and no lint step wired anywhere.
 
@@ -28,7 +27,7 @@ There is no test framework. To iterate on rendering logic without Sublime:
 uv run --python 3.14 python script_test.py
 ```
 
-Run it **from the repo root** — its imports (`from renderer import ...`) rely on the CWD, and imports happen at the bottom of the file under `__main__` (importing `renderer` first also puts `vendor/` on `sys.path`). It renders `README.md` through `CustomRenderer` + wenmode and prints HTML.
+Run it **from the repo root** — its imports (`from renderer import ...`) rely on the CWD. It renders `README.md` through `CustomRenderer` + wenmode and prints HTML (requires wenmode to be importable, e.g. via `uv run --python 3.14 --with wenmode python script_test.py`).
 
 `test.md`, `test_embedded.yml`, and `last_output.html` are scratch/manual-test files, not part of the package. `_render_preview_html` in `MarkdownVibrant.py` can write a debug copy of each preview render to `last_output.html` in the package root, but only when the `preview_debug_write_html` setting is enabled (off by default).
 

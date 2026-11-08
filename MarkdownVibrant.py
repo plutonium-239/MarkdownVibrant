@@ -1,18 +1,14 @@
-import sys
 import os
+import re
 import time
 from functools import partial, wraps
 
-_vendor = os.path.join(os.path.dirname(__file__), 'vendor')
-if _vendor not in sys.path:
-    sys.path.insert(0, _vendor)
-
-from .renderer import CustomRenderer, PRESET
-from wenmode import Wenmode
-from wenmode.plugins import github_alert, mark, superscript, subscript
 import sublime
 import sublime_plugin
-import re
+from wenmode import Wenmode
+from wenmode.plugins import github_alert, mark, subscript, superscript
+
+from .renderer import PRESET, CustomRenderer
 
 # view_id -> (preview_sheet_id, source_view)
 PREVIEW_SHEETS = {}

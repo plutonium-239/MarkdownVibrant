@@ -1,14 +1,7 @@
-import os
 import re
-import sys
-from typing import Any
-
-_vendor = os.path.join(os.path.dirname(__file__), 'vendor')
-if _vendor not in sys.path:
-    sys.path.insert(0, _vendor)
 
 from wenmode import HTMLRenderer
-from wenmode.nodes import List, ListItem, Paragraph, Table, TableRow
+from wenmode.nodes import List, ListItem, Paragraph, Table
 from wenmode.presets import github
 from wenmode.renderers import RenderContext
 
